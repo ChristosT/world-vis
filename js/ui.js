@@ -101,44 +101,16 @@ $(function(){
     });
 	
 	// Set up toolbox buttons
-	$("#settingsbox").dialog({
+	$("#summarybox").dialog({
 		modal: false,
-		autoOpen: false,
-		resizable: true,
+		autoOpen: true,
+		resizable: false,
 		draggable: true,
 		show: true,
 		height: 178,
 		width: 300,
 		position: "right",
-		title: "Map Color Filters"
-	});
-	$("#settingsbox button").button({
-		text:false,
-		icons:{
-			primary: "ui-icon-help"
-		}
-	}).click(function(event,ui){
-		$("#" + $(this).attr("id") + "_text").dialog("option", "title", $(this).text()).dialog("open");
-	});
-	$("#settingsbox p").dialog({
-		modal: true,
-		autoOpen: false,
-		show: true,
-		height: 200,
-		width: 400,
-		position: "center"
-	});
-	$("#settings").button({
-		text:false,
-		icons:{
-			primary: "ui-icon-gear"
-		}
-	}).click(function(event,ui){
-		if (!$("#settingsbox").dialog("isOpen")) {
-			$("#settingsbox").dialog("open");
-		} else {
-			$("#settingsbox").dialog("close");
-		}
+		title: "Summary"
 	});
 	$("#aboutbox").dialog({
 		modal: true,
@@ -159,25 +131,6 @@ $(function(){
 	}).click(function(event,ui){
 		$("#aboutbox").dialog("open");
 	});
-	
-	// Set up filter buttons
-	$("#pop_box").button().data("filterName", "population");
-	$("#area_box").button().data("filterName", "area");
-	$("#ff_box").button().data("filterName", "fudgefactor");
-	$("#bb_box").button().data("filterName", "blueboost");
-	
-	$("#settingsbox input").change(function(event, ui){
-		$(this).button("refresh");
-		activeFilters = [];
-		$("#settingsbox input").each(function(index, item){
-			var filtername = $(item).data("filterName");
-			if ($(item).is(":checked") && filtername) {
-				activeFilters.push(dataFilters.where(function(item){ return item.name == filtername; })[0]);
-			}
-		});
-		scheduleSubtypeChangeEvent();
-	});
-	
 	
 	// Set up slider
 	$("#slider").slider({

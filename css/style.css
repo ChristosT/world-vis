@@ -357,25 +357,16 @@ body {
 	float: none;
 }
 
-#aboutbox, #settingsbox {
+#aboutbox, #summarybox {
 	display:none;
 	background-color: white !important;
 	border-radius: 5px;
 	text-align: left;
 }
 
-#settingsbox {
+#summarybox {
 	text-align: left;
-	font-size: 0.75em;
-}
-
-#settingsbox > div{
-	height: 30px;
-}
-
-#settingsbox button {
-	float: right;
-	height: 100%;
+	font-size: 1em;
 }
 
 #pop_box_btn_text, #area_box_btn_text, #ff_box_btn_text, #bb_box_btn_text {
