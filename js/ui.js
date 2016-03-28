@@ -175,7 +175,6 @@ $(function(){
 		    chart.update();
 		}
 		$(document).bind("flunet-update", updateChartFunction);
-
 		updateChartFunction();
 		return chart;
 	});

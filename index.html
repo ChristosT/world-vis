@@ -38,6 +38,7 @@
 	      <script type="text/javascript" src="js/countryCss.js"></script>
 	      <script type="text/javascript" src="js/ui.js"></script>
 	      <script type="text/javascript" src="js/dataFilters.js"></script>
+	      <script type="text/javascript" src="js/statistics.js"></script>
   </head>
   <body>
     <div id="loadingboxcontainer">
@@ -84,7 +85,7 @@
 	  <input type="radio" id="mapradio_globe" name="mapradio" checked="checked"><label for="mapradio_globe">Globe</label>
 	</div>
 	<div id="toolbox">
-	  <button id="settings">Settings</button>
+	  <button id="settings" OnClick="UpdateStats()">Update Summary Stats</button>
 	  <button id="about">About</button>
 	</div>
 	<div id="subtypecontainer">
