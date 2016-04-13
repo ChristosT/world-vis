@@ -42,12 +42,3 @@ Array.prototype.where = function (p) {
 Array.prototype.select = function (f) {
 	return map(f, this);
 };
-
-//http://stackoverflow.com/questions/1669190/javascript-min-max-array-values
-Array.prototype.max = function () {
-	return Math.max.apply(null, this);
-};
-
-Array.prototype.min = function () {
-	return Math.min.apply(null,this);
-};
