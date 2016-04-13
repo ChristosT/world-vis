@@ -1,21 +1,34 @@
-function compareNumbers(a, b) {
-  return a - b;
-}
-var UpdateStats = function UpdateStats(){
-    var Final_weeks = flunet.where(function (item){return (item.week == 52 && item.year==2011) ;}) // the filter is arbitary, 
-                            .select(function(item){return Number(item.num_total)})
-                                
-    var sum = Final_weeks.reduce(function(a,b) {return a+b ;});
-    var Mean = sum/Final_weeks.length;
-    var Median = Final_weeks.sort(compareNumbers)[Final_weeks.length/2] 
-    console.log(Final_weeks);
-    console.log("MAX " + Final_weeks.max());
-    console.log("MIN " + Final_weeks.min());
-    console.log("Mean " + Mean);
-    console.log("Median " + Median);
-    document.getElementById('MAX').innerHTML = Final_weeks.max()
-    document.getElementById('MIN').innerHTML = Final_weeks.min()
-    document.getElementById('MEAN').innerHTML = Mean.toFixed(3)
-    document.getElementById('MEDIAN').innerHTML = Median
 
+var UpdateStats = function UpdateStats(){
+    var years = dataset[selected].unique("year")
+    console.log(years);
+    
+    var maxPerYear=[];
+    var minPerYear=[];
+    var meanPerYear=[];
+    var medianPerYear=[];
+    
+    for(i=0;i<years.length;++i)
+    {
+        A = dataset[selected].where(function(item){return item.year == years[i];})
+                             .select(function(item){return item.value});
+        maxPerYear.push(A.max());
+        minPerYear.push(A.min());
+        meanPerYear.push(A.mean());
+        medianPerYear.push(A.median());
+    }
+ 
+   
+    table ="<table style=\"width:60%\" cellspacing=\"10\" align=\"center\" >"
+    table +="<tr> <td> Year </td> <td> Max </td> <td> Min </td>  <td> Mean </td> <td> Median </td> </tr>"
+   
+    for(i=0;i<years.length;++i)
+    {
+        table+="<tr> <td> " + years[i] + " </td>  <td>" + maxPerYear[i] + "</td> <td>" + minPerYear[i] + "</td> "
+              +"<td>" + meanPerYear[i].toFixed(2) + "</td> <td>" + medianPerYear[i] + "</td> </tr>";
+    }
+    
+    table+="</table>"
+    document.getElementById('summarybox').innerHTML = table;   
+    
 }

@@ -20,6 +20,7 @@ var subtypeChangeCounter = 0;
 		var year = yearForYearNum(_yearnum);
 		$("#timelabel").text(year);
 		updateMapStylesForYear(year);
+        UpdateStats();
 	});
 
 	var _playTimeout = null;
@@ -176,44 +177,19 @@ $(function(){
     });
 	
 	// Set up toolbox buttons
-	$("#settingsbox").dialog({
+	$("#summarybox").dialog({
 		modal: false,
-		autoOpen: false,
+		autoOpen: true,
 		resizable: true,
 		draggable: true,
 		show: true,
 		height: 178,
 		width: 300,
 		position: "right",
-		title: "Map Color Filters"
-	});
-	$("#settingsbox button").button({
-		text:false,
-		icons:{
-			primary: "ui-icon-help"
-		}
-	}).click(function(event,ui){
-		$("#" + $(this).attr("id") + "_text").dialog("option", "title", $(this).text()).dialog("open");
-	});
-	$("#settingsbox p").dialog({
-		modal: true,
-		autoOpen: false,
-		show: true,
-		height: 200,
-		width: 400,
-		position: "center"
-	});
-	$("#settings").button({
-		text:false,
-		icons:{
-			primary: "ui-icon-gear"
-		}
-	}).click(function(event,ui){
-		if (!$("#settingsbox").dialog("isOpen")) {
-			$("#settingsbox").dialog("open");
-		} else {
-			$("#settingsbox").dialog("close");
-		}
+		title: "Summary",
+        //remove x button
+        //http://stackoverflow.com/a/7920871
+        open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); }
 	});
 	$("#aboutbox").dialog({
 		modal: true,

@@ -37,6 +37,7 @@
 	      <script type="text/javascript" src="js/map.js"></script>
 	      <script type="text/javascript" src="js/countryCss.js"></script>
 	      <script type="text/javascript" src="js/ui.js"></script>
+          <script type="text/javascript" src="js/statistics.js"></script>
   </head>
   <body>
     <div id="loadingboxcontainer">
@@ -83,7 +84,7 @@
 	  <input type="radio" id="mapradio_globe" name="mapradio" checked="checked"><label for="mapradio_globe">Globe</label>
 	</div>
 	<div id="toolbox">
-	  <button id="settings">Settings</button>
+	  <button id="settings" OnClick="UpdateStats()" >Settings</button>
 	  <button id="about">About</button>
 	</div>
 	<div id="subtypecontainer" style="margin-top:10px;">
@@ -197,38 +198,11 @@
 	  CONDITIONS OF ANY KIND, either express or implied. See the License for the
 	  specific language governing permissions and limitations under the License.</pre>
 	</div>
-	<div id="settingsbox">
-	  <div>
-	    <input type="checkbox" id="pop_box" checked="checked"><label for="pop_box">Use Population Filter</label>
-	    <button id="pop_box_btn">Population Filter</button>
-	    <p id="pop_box_btn_text">
-	      Countries have different numbers of people in them, and this leads to different numbers of infected samples, even when the infection rate itself is identical. This filter allows you compare virulence rather than numbers of patients by basing map colors on the number of infected samples per person.
-	    </p>
+
+    <div id="summarybox">
+    <!-- to be populated by Updatestatistics           -->
 	  </div>
-	  <div>
-	    <input type="checkbox" id="area_box" checked="checked"><label for="area_box">Use Area Filter</label>
-	    <button id="area_box_btn">Area Filter</button>
-	    <p id="area_box_btn_text">
-	      Different countries have different areas, and thus take up different amounts of space on the screen. A larger country, if colored the same as a smaller country, will appear to be more infected simply because of the quantity of space covered by the larger country’s color. This filter corrects for this by dispensing equal amount of “ink” to color each country, no matter its size.
-	    </p>
-	  </div>
-	  <div>
-	    <input type="checkbox" id="ff_box" checked="checked"><label for="ff_box">Use Participation Rate Filter</label>
-	    <button id="ff_box_btn">Participation Rate Filter</button>
-	    <p id="ff_box_btn_text">
-	      GISRS participation rates vary between countries and between years. This filter attempts to correct for these factors.
-	    </p>
-	  </div>
-	  <div>
-	    <input type="checkbox" id="bb_box"><label for="bb_box">Enhance Visibility of Influenza Type B</label>
-	    <button id="bb_box_btn">Influenza Type B Visibility Enhancement</button>
-	    <p id="bb_box_btn_text">
-	      The propagation of Influenza type B can be hard to visualize because Type A is so widespread. This filter amplifies the visibility of type B by a factor of 10, allowing you to see its spread better even when it is relatively overwhelmed by type A.
-	    </p>
-	  </div>
-	</div>
-      </div>
-    </div>
+
     <div id="footer">
       <p><a href="README.md">README.md</a>, Branch: dev
 	<br/>Based on CS 725 Project by Reid Rankin and Ayush Khandelwal
