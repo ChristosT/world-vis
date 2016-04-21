@@ -1,6 +1,6 @@
 
 var UpdateStats = function UpdateStats(){
-    var years = dataset[selected].unique("year")
+    var years = dataset[selected].unique("year") //TODO faster we have the years in alist now
     console.log(years);
     
     var maxPerYear=[];

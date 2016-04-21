@@ -70,17 +70,19 @@ $(function(){
 			reader.onload = function(e) {
 				selected = subtypes.length;
 				var data = $.parseJSON(e.target.result);
+				console.log(dataset[selected])	;
 				dataset[selected] = data.sort(function(a, b){
 					if(a.year != b.year) {
 						return a.year - b.year;
 					}
 				});
-								
+				console.log(dataset[selected])	;			
 				var firstyear = dataset[selected][0].year;
 				years_by_index[selected] = [];
 		
 				for(var i=0; i<dataset[selected].length; i++) {
 					var row = dataset[selected][i];
+					//console.log(row)
 			
 					row.yearnum = years_by_index[selected].length;
 					var lastyear = (years_by_index[selected].length > 0 ? years_by_index[selected][maxYearIndex()] : null);
@@ -89,8 +91,9 @@ $(function(){
 					}
 					row.yearindex = maxYearIndex();
 					row.scalefactors = {};
-				}
-				
+					row.continent_scalefactors = {};
+					row.continent_avg ={};
+					}				
 				console.log(JSON.stringify(years_by_index[selected]));
 				
 				subtypes.push({name: "value", prettyname: filename, color: data_colors(selected), id: selected});
@@ -101,6 +104,14 @@ $(function(){
 						$('label[for="'+ i +'"]').css("background-color", "#eee");
 					}
 				}
+				//Initialize dataset for continents
+				dataset_Continent[selected] = [];
+				for( var i=0; i<years_by_index[selected].length; i++){
+				   for(var j=0; j<continents.length; j++){
+					   var row = dataset_Continent[selected].push({continent: continents[j], value: -1, scalefactors:-1, year: yearForYearIndex(i).year,yearindex: i, yearnum: i+1 })
+					}
+				}
+				//console.log(dataset_Continent);
 				renormalizeData(currentSubtypeSet);
 				
 				var r= $('<input type="checkbox" class="datasets" id="' + selected + '" checked="checked"><label for="' + selected + '" style="background-color:' + data_colors(selected) + ';">' + filename + '</label>');
@@ -133,6 +144,7 @@ $(function(){
 			};
 			
 			reader.readAsText(e.target.files.item(0));
+	
 		}
 
 		this.value = null;
