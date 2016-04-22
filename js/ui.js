@@ -1,7 +1,182 @@
 // ui.js
 // main UI components, including timeline slider and country pop-up
 
+
 var data_colors = d3.scale.category10();
+function GenerateLineData(countryCode) {
+  var CountryData  = [],
+	  ContinentData=[];
+
+  //Data is represented as an array of {x,y} pairs.
+  var continent = list_Continent[countryCode] ; 
+  for (var yearindex = 0;yearindex<years_by_index[selected].length;yearindex++)
+  {
+	yy1 = dataset[selected].where(function(row){return (row.country == countryCode) && (row.yearindex == yearindex);})
+                             .select(function(row){return row.value});
+	xx1 = yearindex;
+	CountryData.push({x: xx1, y: yy1});
+	
+	yy2 = dataset_Continent[selected].where(function(row){return (row.continent == continent) && (row.yearindex == yearindex);})
+                             .select(function(row){return row.value});
+
+	ContinentData.push({x: xx1, y: yy2});
+  }
+
+
+  //Line chart data should be sent as an array of series objects.
+  return [
+    {
+      values: CountryData,      //values - represents the array of {x,y} data points
+      key: countryCode, //key  - the name of the series.
+      color: data_colors.range()[selected]  //color - optional: choose your own line color.
+    }//,
+   // {
+   //   values: ContinentData,
+  //    key: continent,
+   //   color: '#2ca02c'
+   // }
+  ];
+}
+
+
+
+function GenerateGraph(svg,width,height,countryCode){
+    //http://bl.ocks.org/d3noob/38744a17f9c0141bcd04
+
+// Set the ranges
+var x = d3.scale.linear().range([0, width]);//.format("04d");
+var y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(10).tickFormat(d3.format("d"));
+    
+var yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(8);
+
+// Define the line
+var valueline = d3.svg.line()
+    .x(function(d) { return x((d.year)); })
+    .y(function(d) { return y((d.value));})
+    .interpolate("linear");
+
+  var country_plotdata  = [];
+  var continent_plotdata  = [];
+  var continent = list_Continent[countryCode];
+  for (var yearindex = 0;yearindex<maxYearIndex() +1 ;yearindex++)
+  {
+    var datapoint = {value:-1,year:1888,valid:0}; //why we have to do that ?
+    datapoint.value = dataset[selected].where(function(row){return (row.country == countryCode) 
+                                                                && (row.yearindex == yearindex);})
+                             .select(function(row){return row.value});
+    
+    datapoint.year = yearForYearIndex(yearindex).year;
+    if(datapoint.value.length == 0)
+    {
+        datapoint.valid=0;
+        datapoint.value=-1;
+    }
+    else
+    {
+        datapoint.valid=1;
+        datapoint.value=datapoint.value[0];
+        country_plotdata.push(datapoint);
+    }
+      datapoint = {value:-1,year:1888,valid:0}; //why we have to do that ?
+    datapoint.year = yearForYearIndex(yearindex).year;
+
+    datapoint.value = dataset_Continent[selected].where(function(row){return (row.continent == continent) 
+                                                                && (row.yearindex == yearindex);})
+                             .select(function(row){return row.value});
+    
+
+    if(datapoint.value.length == 0)
+    {
+        datapoint.valid=0;
+        datapoint.value=-1;
+    }
+    else
+    {
+        datapoint.valid=1;
+        datapoint.value=datapoint.value[0];
+        continent_plotdata.push(datapoint);
+    } 
+       
+       
+    
+  }
+    // Scale the range of the data
+    x.domain([ d3.min(continent_plotdata,function(d) { return d.year; }),d3.max(continent_plotdata,function(d) { return d.year; })]);
+    y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})]),
+               d3.max([d3.max(country_plotdata,function(d) { return d.value;}),d3.max(continent_plotdata,function(d) { return d.value;})])]);
+
+
+    // Add the paths.
+    svg.append("path")
+       .attr("d", valueline(country_plotdata))
+       .attr("stroke",  data_colors.range()[selected])
+       .attr("stroke-width", 2)
+       .attr("fill", "none");
+       
+    svg.append("path")
+       .attr("d", valueline(continent_plotdata))
+       .attr("stroke",  data_colors.range()[selected])
+       .attr("stroke-width", 2)
+       .attr("fill", "none")
+       .style("stroke-dasharray", ("3, 3"));   
+
+    // Add the scatterplots
+    svg.selectAll("dot")
+        .data(country_plotdata)
+        .enter().append("circle")
+        .attr("r", 3.5)
+        .attr("cx", function(d) { return x(d.year); })
+        .attr("cy", function(d) { return y(d.value); });
+    
+    svg.selectAll("dot2")
+        .data(continent_plotdata)
+        .enter().append("circle")
+        .attr("r", 3.5)
+        .attr("cx", function(d) { return x(d.year); })
+        .attr("cy", function(d) { return y(d.value); });
+
+    // Add the X Axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    // Add the Y Axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //functions
 var updateUIForYearNum, playFunction, pauseFunction;
@@ -91,8 +266,6 @@ $(function(){
 					}
 					row.yearindex = maxYearIndex();
 					row.scalefactors = {};
-					row.continent_scalefactors = {};
-					row.continent_avg ={};
 					}				
 				console.log(JSON.stringify(years_by_index[selected]));
 				
@@ -225,9 +398,50 @@ $(function(){
 	
 	var dialogJQ = null;
 	$(".country").click(function(){
-		console.log("clicked");
-	});
+		if (dialogJQ != null) dialogJQ.dialog("close");
+		pauseFunction();
 		
+		var countryCode = d3.select(this).attr("countryCode");
+		var updateChartFunction;
+		dialogJQ = $("<div class='countryPopoutDialog'></div>");
+		//dialogJQ.append($("<div class='xLabel'>Years</div>"));
+        //dialogJQ.append($("<div class='yLabel'>"+currentSubtypeSet.prettyname+"</div>"));
+		
+        //set up svg fro graph
+        var margin = {top: 30, right: 20, bottom: 30, left: 50},
+                    width = 600 - margin.left - margin.right,
+                    height = 270 - margin.top - margin.bottom;
+      
+        var svg = d3.select(dialogJQ.get()[0])
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", 
+                    "translate(" + margin.left + "," + margin.top + ")");
+        GenerateGraph(svg,width,height,countryCode);
+        
+
+		var updateChartFunction = function() {};
+  
+  dialogJQ.on("dialogresize", updateChartFunction);
+			$(document).bind("flunet-update", updateChartFunction);
+			
+			updateChartFunction();
+		dialogJQ.dialog({
+			title: iso_code_to_name(countryCode),
+			minWidth: 850,
+			minHeight: 415,
+			width: 850,
+			height: 415,
+			close: function(event, ui) {
+				$(document).unbind("flunet-update", updateChartFunction);
+				dialogJQ = null;
+			}
+		});
+	});
+	
+	
 	/*document.addEventListener("DOMNodeInserted", function(event) {
 		var node = $(event.target);
 		if (node.is(".countryPopoutDialog .nvtooltip")){

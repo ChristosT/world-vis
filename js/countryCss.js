@@ -59,6 +59,8 @@ var updateMapStylesForYear = function (year) {
 	}
 	else
 	{	clearCountryColors();
+		var scalefactor = dataset_Continent[selected][0].scalefactors;
+
 		for(var country in list_Continent)
 		{
 			//var colorFunc = function(country,year) {
@@ -70,13 +72,13 @@ var updateMapStylesForYear = function (year) {
 			//var scalefactor = (subtype.name in row.continent_scalefactors ? row.continent_scalefactors[subtype.name] : 1.0);
 			//dataset[selected][index].continent_avg[subtypeSet.name]
 			var tempcontinent = list_Continent[country];
-			var value_normalized = dataset_Continent[selected].where(function(item){return (item.year == year) && (item.continent == tempcontinent) &&(item.scalefactors!=-1)})
-															.select(function(item){
-																console.log(item)
-																return item.value* item.scalefactor});
-
+			
+			
+			var value_normalized = dataset_Continent[selected].where(function(row){return (row.year == year) && (row.continent == tempcontinent) })
+															.select(function(row){ return row.value}) ;
+			value_normalized*=scalefactor;
 		
-			//console.log(scalefactor);
+			
 			var tintcolor = $.Color("transparent").transition($.Color(subtype.color), value_normalized);
 			tints.push({
 				color: tintcolor,
@@ -92,8 +94,9 @@ var updateMapStylesForYear = function (year) {
 				var mixedcolor = Color_mixer.mix(tint.color, fillcolor).alpha(thisalpha);
 				finalMix.push(mixedcolor);
 			});
-			return Color_mixer.mix(finalMix);
 			
+			var countrycolor = Color_mixer.mix(finalMix);
+			colorCountry(country, countrycolor.toHexString());
 		}
 		
 		

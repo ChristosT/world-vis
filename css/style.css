@@ -382,3 +382,19 @@ body {
     margin-top: 10px;
     margin-right: 15px;
 }
+
+/* d3 specific */
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+
