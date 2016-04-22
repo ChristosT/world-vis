@@ -24,8 +24,8 @@ var UpdateStats = function UpdateStats(){
    
     for(i=0;i<years.length;++i)
     {
-        table+="<tr> <td> " + years[i] + " </td>  <td>" + maxPerYear[i] + "</td> <td>" + minPerYear[i] + "</td> "
-              +"<td>" + meanPerYear[i].toFixed(2) + "</td> <td>" + medianPerYear[i] + "</td> </tr>";
+        table+="<tr> <td> " + years[i] + " </td>  <td>" + maxPerYear[i].toFixed(2)  + "</td> <td>" + minPerYear[i].toFixed(2)  + "</td> "
+              +"<td>" + meanPerYear[i].toFixed(2) + "</td> <td>" + medianPerYear[i].toFixed(2)  + "</td> </tr>";
     }
     
     table+="</table>"
