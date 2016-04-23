@@ -4,35 +4,6 @@
 
 var data_colors = d3.scale.category10();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function GenerateGraph(svg,width,height,countryCode){
     //http://bl.ocks.org/d3noob/38744a17f9c0141bcd04
 var include_avg = 1; //should be zero
@@ -48,7 +19,7 @@ var y = d3.scale.linear().range([height, 0]);
 
 // Define the axes
 var xAxis = d3.svg.axis().scale(x)
-    .orient("bottom").ticks(10).tickFormat(d3.format("d"));
+    .orient("bottom").ticks(maxYearIndex()/2).tickFormat(d3.format("d"));
     
 var yAxis = d3.svg.axis().scale(y)
     .orient("left").ticks(8);
@@ -62,54 +33,46 @@ var valueline = d3.svg.line()
   var country_plotdata  = [];
   var continent_plotdata  = [];
   var continent = list_Continent[countryCode];
-  for (var yearindex = 0;yearindex<maxYearIndex() +1 ;yearindex++)
+  var datapoint;
+  for (var yearindex = 0;yearindex<=maxYearIndex();yearindex++)
   {
-    var datapoint = {value:-1,year:1888,valid:0}; //why we have to do that ?
+    datapoint =  {value:-1,year:1888};
+
     datapoint.value = dataset[selected].where(function(row){return (row.country == countryCode) 
                                                                 && (row.yearindex == yearindex);})
                              .select(function(row){return row.value});
     
     datapoint.year = yearForYearIndex(yearindex).year;
-    if(datapoint.value.length == 0)
+    if(datapoint.value.length != 0)
     {
-        datapoint.valid=0;
-        datapoint.value=-1;
-    }
-    else
-    {
-        datapoint.valid=1;
         datapoint.value=datapoint.value[0];
         country_plotdata.push(datapoint);
     }
-      datapoint = {value:-1,year:1888,valid:0}; //why we have to do that ?
+ 
+    datapoint =  {value:-1,year:1888};
     datapoint.year = yearForYearIndex(yearindex).year;
 
-    datapoint.value = dataset_Continent[selected].where(function(row){return (row.continent == continent) 
-                                                                && (row.yearindex == yearindex);})
+    datapoint.value = dataset_Continent[selected].where(function(row){return (row.continent == continent) && (row.yearindex == yearindex) &&(row.valid==1);})
                              .select(function(row){return row.value});
     
 
-    if(datapoint.value.length == 0)
+    
+    if(datapoint.value.length != 0)
     {
-        datapoint.valid=0;
-        datapoint.value=-1;
-    }
-    else
-    {
-        datapoint.valid=1;
         datapoint.value=datapoint.value[0];
         continent_plotdata.push(datapoint);
     } 
-       
+  
        
     
   }
 
     // Scale the range of the data
-    x.domain([ d3.min(continent_plotdata,function(d) { return d.year; }),d3.max(continent_plotdata,function(d) { return d.year; })]);
+    x.domain([ d3.min(continent_plotdata,function(d) { return d.year; })-1,d3.max(continent_plotdata,function(d) { return d.year; })+1]);
+   
     if(include_avg)
 	{
-	y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})]),
+	y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})])-0.5,
 	           d3.max([d3.max(country_plotdata,function(d) { return d.value;}),d3.max(continent_plotdata,function(d) { return d.value;})])]);
 	}
 	else
@@ -122,14 +85,17 @@ var valueline = d3.svg.line()
        .attr("stroke",  data_colors.range()[selected])
        .attr("stroke-width", 2)
        .attr("fill", "none");
-       if(include_avg){
+      
+    if(include_avg)
+    {
     svg.append("path")
        .attr("d", valueline(continent_plotdata))
        .attr("stroke",  data_colors.range()[selected])
        .attr("stroke-width", 2)
        .attr("fill", "none")
        .style("stroke-dasharray", ("3, 3"));   
-	   }
+	}
+    
     // Add the scatterplots
     svg.selectAll("dot")
         .data(country_plotdata)
@@ -137,27 +103,17 @@ var valueline = d3.svg.line()
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
         .attr("cy", function(d) { return y(d.value); });
-     if(include_avg){
+    
+    if(include_avg)
+    {
     svg.selectAll("dot2")
         .data(continent_plotdata)
         .enter().append("circle")
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
         .attr("cy", function(d) { return y(d.value); });
-	 }
-/*
-    // Add the X Axis
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+    }
 
-    // Add the Y Axis
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
-*/		
-		
 	svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
@@ -169,7 +125,7 @@ var valueline = d3.svg.line()
       .style("text-anchor", "middle")
 	  .style("font-weight","bold")
 	  .style("font-size","14px")
-      .text("Years");
+      .text("Year");
 
   // y-axis
   svg.append("g")
@@ -190,30 +146,6 @@ var valueline = d3.svg.line()
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //functions
 var updateUIForYearNum, playFunction, pauseFunction;
 
@@ -226,7 +158,7 @@ var currentYearIndex =0;
 	var _yearnum = null;
 	updateUIForYearNum = function(yearnum) {
 		_yearnum = yearnum;
-		currentYearIndex = yearnum;
+		currentYearIndex = yearnum-1;
 		$(document).trigger("flunet-update");
 	};
 	$(document).on("flunet-update", function(){
@@ -295,7 +227,7 @@ $(function(){
 		
 				for(var i=0; i<dataset[selected].length; i++) {
 					var row = dataset[selected][i];
-					//console.log(row)
+
 			
 					row.yearnum = years_by_index[selected].length;
 					var lastyear = (years_by_index[selected].length > 0 ? years_by_index[selected][maxYearIndex()] : null);
@@ -317,9 +249,9 @@ $(function(){
 				}
 				//Initialize dataset for continents
 				dataset_Continent[selected] = [];
-				for( var i=0; i<years_by_index[selected].length; i++){
+				for( var i=0; i<=maxYearIndex(); i++){
 				   for(var j=0; j<continents.length; j++){
-					   var row = dataset_Continent[selected].push({continent: continents[j], value: -1, scalefactors:-1, year: yearForYearIndex(i).year,yearindex: i, yearnum: i+1 })
+					   var row = dataset_Continent[selected].push({continent: continents[j], value: -1, scalefactors:-1, year: yearForYearIndex(i).year,yearindex: i, yearnum: i+1, valid:0 })
 					}
 				}
 				//console.log(dataset_Continent);

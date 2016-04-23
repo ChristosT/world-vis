@@ -217,29 +217,35 @@ var renormalizeData = function(subtypeSet) {
 	
 	var avg_per_continent_per_year = [];
 	var numberofcountries= [54,47,23,43,12,14,1];
-		
-	for(i = 0; i < maxYearIndex()+1; i++) {
+    
+    //keep track of the years that at least one country in each continent
+    //has any data
+    var valid_years = new Array(maxYearIndex()+1)
+	for(i = 0; i <=maxYearIndex(); i++) {
 		var arr2 = [];
 		for(j = 0; j < continents.length; j++) {
 				arr2.push(0);
 		}
 			avg_per_continent_per_year.push(arr2);
+            valid_years[i] = new Array(continents.length);
 	}
 
 	
-	var yearMaximum = yearMaxes.max();
-
+	var yearMaximum = yearMaxes.max(maxYearIndex()+1);
+    
+    
+    
 	var val = dataset[selected].forEach(function(row) {
 		row.scalefactors[subtypeSet.name] = 1.0/yearMaximum;
-		//console.log(row.yearindex,ContinentIndex(list_Continent[row.country]));
-		avg_per_continent_per_year[row.yearindex][ContinentIndex(list_Continent[row.country])] +=  row.value; //maybe row.yearindex????
+		avg_per_continent_per_year[row.yearindex][ContinentIndex(list_Continent[row.country])] +=  row.value; 
+        valid_years[row.yearindex][ContinentIndex(list_Continent[row.country])] = 1;
 
 	});	
 	
-	//Continent stuff
+	//Continent staff
 		//Maximum ovewr all averages over all the years
 		var yearMaximumContinent = -1*Number.MAX_VALUE ;
-		for(i = 0; i < maxYearIndex()+1; i++) 
+		for(i = 0; i <= maxYearIndex(); i++) 
 		{
 			
 			for(j = 0; j < continents.length; j++) 
@@ -254,11 +260,17 @@ var renormalizeData = function(subtypeSet) {
 			}
 		}
 		
-		//var yearMaximum = yearMaxes.max();
-		console.log(dataset_Continent[selected])
+
 	var val = dataset_Continent[selected].forEach(function(row) {
-		row.value = avg_per_continent_per_year[row.yearindex][ContinentIndex(row.continent)];
-		row.scalefactors = 1.0/yearMaximumContinent;
+        //push data only if the pair (year ,continent) is valid
+        //ie only if there exists at least one country in the continent
+        //that has some data for this year
+        if(valid_years[row.yearindex][ContinentIndex(row.continent)]==1)
+        {
+            row.value = avg_per_continent_per_year[row.yearindex][ContinentIndex(row.continent)];
+            row.scalefactors = 1.0/yearMaximumContinent;
+            row.valid = 1;
+        }
 	
 	});	
 
