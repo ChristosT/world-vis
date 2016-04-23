@@ -17,6 +17,7 @@ function clearCountryColors() {
 }
 
 var updateMapStylesForYear = function (year) {
+
 	if(continent_selected == 0)
 	{
 	var colorFunc = function(row) {
@@ -73,7 +74,7 @@ var updateMapStylesForYear = function (year) {
 			//dataset[selected][index].continent_avg[subtypeSet.name]
 			var tempcontinent = list_Continent[country];
 			
-			
+			console.log(country)
 			var value_normalized = dataset_Continent[selected].where(function(row){return (row.year == year) && (row.continent == tempcontinent) })
 															.select(function(row){ return row.value}) ;
 			value_normalized*=scalefactor;
@@ -86,7 +87,7 @@ var updateMapStylesForYear = function (year) {
 			});
 			
 			var totalTintValues = fold(function(acc, item) { return acc + item.valueNormalized; }, 0, tints);
-			if (totalTintValues == 0) return fillcolor;
+			//if (totalTintValues == 0) return fillcolor;
 
 			var finalMix = [];
 			tints.forEach(function(tint){
@@ -96,6 +97,7 @@ var updateMapStylesForYear = function (year) {
 			});
 			
 			var countrycolor = Color_mixer.mix(finalMix);
+			console.log(country)
 			colorCountry(country, countrycolor.toHexString());
 		}
 		

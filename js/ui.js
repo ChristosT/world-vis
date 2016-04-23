@@ -3,46 +3,45 @@
 
 
 var data_colors = d3.scale.category10();
-function GenerateLineData(countryCode) {
-  var CountryData  = [],
-	  ContinentData=[];
-
-  //Data is represented as an array of {x,y} pairs.
-  var continent = list_Continent[countryCode] ; 
-  for (var yearindex = 0;yearindex<years_by_index[selected].length;yearindex++)
-  {
-	yy1 = dataset[selected].where(function(row){return (row.country == countryCode) && (row.yearindex == yearindex);})
-                             .select(function(row){return row.value});
-	xx1 = yearindex;
-	CountryData.push({x: xx1, y: yy1});
-	
-	yy2 = dataset_Continent[selected].where(function(row){return (row.continent == continent) && (row.yearindex == yearindex);})
-                             .select(function(row){return row.value});
-
-	ContinentData.push({x: xx1, y: yy2});
-  }
 
 
-  //Line chart data should be sent as an array of series objects.
-  return [
-    {
-      values: CountryData,      //values - represents the array of {x,y} data points
-      key: countryCode, //key  - the name of the series.
-      color: data_colors.range()[selected]  //color - optional: choose your own line color.
-    }//,
-   // {
-   //   values: ContinentData,
-  //    key: continent,
-   //   color: '#2ca02c'
-   // }
-  ];
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 function GenerateGraph(svg,width,height,countryCode){
     //http://bl.ocks.org/d3noob/38744a17f9c0141bcd04
-
+var include_avg = 1; //should be zero
+  d3.select("#continent_checkbox").on("change",function(){
+                    if(this.checked)
+                    {
+						include_avg =1;   //How to bind ???
+						
+					} });
 // Set the ranges
 var x = d3.scale.linear().range([0, width]);//.format("04d");
 var y = d3.scale.linear().range([height, 0]);
@@ -105,26 +104,32 @@ var valueline = d3.svg.line()
        
     
   }
+
     // Scale the range of the data
     x.domain([ d3.min(continent_plotdata,function(d) { return d.year; }),d3.max(continent_plotdata,function(d) { return d.year; })]);
-    y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})]),
-               d3.max([d3.max(country_plotdata,function(d) { return d.value;}),d3.max(continent_plotdata,function(d) { return d.value;})])]);
-
-
+    if(include_avg)
+	{
+	y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})]),
+	           d3.max([d3.max(country_plotdata,function(d) { return d.value;}),d3.max(continent_plotdata,function(d) { return d.value;})])]);
+	}
+	else
+	{
+		y.domain([ d3.min(country_plotdata,function(d) { return d.value;}) -0.5,d3.max(country_plotdata,function(d) { return d.value;})+0.5]);
+	}
     // Add the paths.
     svg.append("path")
        .attr("d", valueline(country_plotdata))
        .attr("stroke",  data_colors.range()[selected])
        .attr("stroke-width", 2)
        .attr("fill", "none");
-       
+       if(include_avg){
     svg.append("path")
        .attr("d", valueline(continent_plotdata))
        .attr("stroke",  data_colors.range()[selected])
        .attr("stroke-width", 2)
        .attr("fill", "none")
        .style("stroke-dasharray", ("3, 3"));   
-
+	   }
     // Add the scatterplots
     svg.selectAll("dot")
         .data(country_plotdata)
@@ -132,14 +137,15 @@ var valueline = d3.svg.line()
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
         .attr("cy", function(d) { return y(d.value); });
-    
+     if(include_avg){
     svg.selectAll("dot2")
         .data(continent_plotdata)
         .enter().append("circle")
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
         .attr("cy", function(d) { return y(d.value); });
-
+	 }
+/*
     // Add the X Axis
     svg.append("g")
         .attr("class", "x axis")
@@ -150,6 +156,36 @@ var valueline = d3.svg.line()
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
+*/		
+		
+	svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width/2)
+      .attr("y", 40)
+      .style("text-anchor", "middle")
+	  .style("font-weight","bold")
+	  .style("font-size","14px")
+      .text("Years");
+
+  // y-axis
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+	  .attr("y", -50)
+	  .attr("x", -height/2)
+      .attr("dy", "-.11em")
+      .style("text-anchor", "middle")
+	  .style("font-weight","bold")
+	  .style("font-size","12px")
+      .text(currentSubtypeSet.prettyname);
+	  
 
 };
 
@@ -184,11 +220,13 @@ var updateUIForYearNum, playFunction, pauseFunction;
 var subtypes = [];
 var currentSubtypeSet = null;
 var subtypeChangeCounter = 0;
+var currentYearIndex =0;
 
 (function(){
 	var _yearnum = null;
 	updateUIForYearNum = function(yearnum) {
 		_yearnum = yearnum;
+		currentYearIndex = yearnum;
 		$(document).trigger("flunet-update");
 	};
 	$(document).on("flunet-update", function(){
@@ -322,6 +360,29 @@ $(function(){
 
 		this.value = null;
 	});
+
+	$("#continent_radio").buttonset();
+	$("#country").click(function() {
+		
+		  continent_selected=0;
+		  updateMapStylesForYear(yearForYearIndex(currentYearIndex).year);
+		
+		  // $("#globecontainer").fadeOut(1000, function() {
+				   //setGlobeVelocity([0, 0, 0]);
+		   //});
+		   //$("#mapcontainer").fadeIn(1000);
+	});
+	$("#continent").click(function() {
+		
+		 continent_selected=1;
+		 console.log(yearForYearIndex(currentYearIndex));
+		 updateMapStylesForYear(yearForYearIndex(currentYearIndex).year);
+		   //if (!($("#globec7ontainer").is(":visible"))) setGlobeAngle([0, -30, 0]);
+		  // setGlobeVelocity([0.01, 0, 0]);
+		  // $("#mapcontainer").fadeOut(1000);
+		  // $("#globecontainer").fadeIn(1000);
+	});
+	//$("#mapcontainer").fadeIn(1000);
 	
 	// Activate tooltips
 	$(".country").tooltip({
@@ -403,14 +464,14 @@ $(function(){
 		
 		var countryCode = d3.select(this).attr("countryCode");
 		var updateChartFunction;
-		dialogJQ = $("<div class='countryPopoutDialog'></div>");
+		dialogJQ = $("<div class='countryPopoutDialog'>" + "<input type=\"checkbox\" id=\"#continent_checkbox\"><label > Show continent average</label>	</div>");
 		//dialogJQ.append($("<div class='xLabel'>Years</div>"));
         //dialogJQ.append($("<div class='yLabel'>"+currentSubtypeSet.prettyname+"</div>"));
 		
-        //set up svg fro graph
-        var margin = {top: 30, right: 20, bottom: 30, left: 50},
-                    width = 600 - margin.left - margin.right,
-                    height = 270 - margin.top - margin.bottom;
+        //set up svg for graph
+        var margin = {top: 30, right: 20, bottom: 30, left: 70},
+                    width = 750 - margin.left - margin.right,
+                    height = 315 - margin.top - margin.bottom;
       
         var svg = d3.select(dialogJQ.get()[0])
                     .append("svg")
@@ -421,13 +482,14 @@ $(function(){
                     "translate(" + margin.left + "," + margin.top + ")");
         GenerateGraph(svg,width,height,countryCode);
         
-
+/*
 		var updateChartFunction = function() {};
   
-  dialogJQ.on("dialogresize", updateChartFunction);
-			$(document).bind("flunet-update", updateChartFunction);
+ // dialogJQ.on("dialogresize", updateChartFunction);
+		//	$(document).bind("flunet-update", updateChartFunction);
 			
-			updateChartFunction();
+		//	updateChartFunction();
+		*/
 		dialogJQ.dialog({
 			title: iso_code_to_name(countryCode),
 			minWidth: 850,
@@ -435,7 +497,7 @@ $(function(){
 			width: 850,
 			height: 415,
 			close: function(event, ui) {
-				$(document).unbind("flunet-update", updateChartFunction);
+				//$(document).unbind("flunet-update", updateChartFunction);
 				dialogJQ = null;
 			}
 		});
