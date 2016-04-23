@@ -5,75 +5,69 @@
 var data_colors = d3.scale.category10();
 
 function GenerateGraph(svg,width,height,countryCode){
-    //http://bl.ocks.org/d3noob/38744a17f9c0141bcd04
-var include_avg = 1; //should be zero
-  d3.select("#continent_checkbox").on("change",function(){
-                    if(this.checked)
-                    {
-						include_avg =1;   //How to bind ???
-						
-					} });
-// Set the ranges
-var x = d3.scale.linear().range([0, width]);//.format("04d");
-var y = d3.scale.linear().range([height, 0]);
+	//http://bl.ocks.org/d3noob/38744a17f9c0141bcd04
+	var include_avg = 1; //should be zero
+  	d3.select("#continent_checkbox").on("change",function(){
+	                    if(this.checked)
+        		     {
+				include_avg =1;   //How to bind ???
+			   } });
+	// Set the ranges
+    var x = d3.scale.linear().range([0, width]);//.format("04d");
+	var y = d3.scale.linear().range([height, 0]);
 
-// Define the axes
-var xAxis = d3.svg.axis().scale(x)
-    .orient("bottom").ticks(maxYearIndex()/2).tickFormat(d3.format("d"));
+	// Define the axes
+	var xAxis = d3.svg.axis().scale(x)
+    	.orient("bottom").ticks(maxYearIndex()/2).tickFormat(d3.format("d"));
     
-var yAxis = d3.svg.axis().scale(y)
-    .orient("left").ticks(8);
+	var yAxis = d3.svg.axis().scale(y)
+    	.orient("left").ticks(8);
 
-// Define the line
-var valueline = d3.svg.line()
-    .x(function(d) { return x((d.year)); })
-    .y(function(d) { return y((d.value));})
-    .interpolate("linear");
+	// Define the line
+	var valueline = d3.svg.line()
+    	.x(function(d) { return x((d.year)); })
+	    .y(function(d) { return y((d.value));})
+    	.interpolate("linear");
 
-  var country_plotdata  = [];
-  var continent_plotdata  = [];
-  var continent = list_Continent[countryCode];
-  var datapoint;
-  for (var yearindex = 0;yearindex<=maxYearIndex();yearindex++)
-  {
-    datapoint =  {value:-1,year:1888};
-
-    datapoint.value = dataset[selected].where(function(row){return (row.country == countryCode) 
-                                                                && (row.yearindex == yearindex);})
-                             .select(function(row){return row.value});
+	var country_plotdata  = [];
+	var continent_plotdata  = [];
+	var continent = list_Continent[countryCode];
+	var datapoint;
+	for (var yearindex = 0;yearindex<=maxYearIndex();yearindex++)
+	{
+    	datapoint =  {value:-1,year:1888};
+   		datapoint.value = dataset[selected].where(function(row){return (row.country == countryCode) && (row.yearindex == yearindex);})
+			                               .select(function(row){return row.value});
     
-    datapoint.year = yearForYearIndex(yearindex).year;
-    if(datapoint.value.length != 0)
-    {
-        datapoint.value=datapoint.value[0];
-        country_plotdata.push(datapoint);
-    }
- 
-    datapoint =  {value:-1,year:1888};
-    datapoint.year = yearForYearIndex(yearindex).year;
+	    datapoint.year = yearForYearIndex(yearindex).year;
 
-    datapoint.value = dataset_Continent[selected].where(function(row){return (row.continent == continent) && (row.yearindex == yearindex) &&(row.valid==1);})
-                             .select(function(row){return row.value});
+	    if(datapoint.value.length != 0)
+	    {
+       		datapoint.value=datapoint.value[0];
+	        country_plotdata.push(datapoint);
+	    }
+
+	    datapoint =  {value:-1,year:1888};
+	    datapoint.year = yearForYearIndex(yearindex).year;
+	    datapoint.value = dataset_Continent[selected].where(function(row){return (row.continent == continent) && (row.yearindex == yearindex) &&(row.valid==1);})
+       							                     .select(function(row){return row.value});
     
 
     
-    if(datapoint.value.length != 0)
-    {
-        datapoint.value=datapoint.value[0];
-        continent_plotdata.push(datapoint);
-    } 
-  
-       
-    
-  }
+	    if(datapoint.value.length != 0)
+	    {
+       		datapoint.value=datapoint.value[0];
+	        continent_plotdata.push(datapoint);
+   		} 
+	}
 
     // Scale the range of the data
     x.domain([ d3.min(continent_plotdata,function(d) { return d.year; })-1,d3.max(continent_plotdata,function(d) { return d.year; })+1]);
    
     if(include_avg)
 	{
-	y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})])-0.5,
-	           d3.max([d3.max(country_plotdata,function(d) { return d.value;}),d3.max(continent_plotdata,function(d) { return d.value;})])]);
+		y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})])-0.5,
+		           d3.max([d3.max(country_plotdata,function(d) { return d.value;}),d3.max(continent_plotdata,function(d) { return d.value;})])]);
 	}
 	else
 	{

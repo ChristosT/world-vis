@@ -26,12 +26,9 @@ console.log(year);
 		var subtype = currentSubtypeSet;
 
 		var scalefactor = (subtype.name in row.scalefactors ? row.scalefactors[subtype.name] : 1.0);
-		//var scalefactor = (subtype.name in row.continent_scalefactors ? row.continent_scalefactors[subtype.name] : 1.0);
-		//dataset[selected][index].continent_avg[subtypeSet.name]
+
 		var value_normalized = (row[subtype.name] * scalefactor);
-		//var value_normalized = (row.continent_avg.value * scalefactor);
-	
-		//console.log(scalefactor);
+
 		var tintcolor = $.Color("transparent").transition($.Color(subtype.color), value_normalized);
 		tints.push({
 			color: tintcolor,
@@ -53,7 +50,7 @@ console.log(year);
 	clearCountryColors();
 	
 	$.each(dataset[selected].where(function (row) {
-		return row.year == year;  //this selects only the countries that have a valuen
+		return row.year == year; 
 		}), function (index, row) {
 		colorCountry(row.country, colorFunc(row).toHexString());
 		});
@@ -66,24 +63,19 @@ console.log(year);
 		{
 		
        
-            //var colorFunc = function(country,year) {
 			var fillcolor = $.Color("#FFFFFF");
 			var tints = [];
 			var subtype = currentSubtypeSet;
-
-			//var scalefactor = (subtype.name in row.scalefactors ? row.scalefactors[subtype.name] : 1.0);
-			//var scalefactor = (subtype.name in row.continent_scalefactors ? row.continent_scalefactors[subtype.name] : 1.0);
-			//dataset[selected][index].continent_avg[subtypeSet.name]
 			var tempcontinent = list_Continent[country];
 			
 			
-			//var valid flag
-            var output = dataset_Continent[selected].where(function(row){return (row.year == year) && (row.continent == tempcontinent) })
-															.select(function(row){ return [row.value,row.valid]}) ;
+			
+            		var output = dataset_Continent[selected].where(function(row){return (row.year == year) && (row.continent == tempcontinent) })
+								.select(function(row){ return [row.value,row.valid]}) ;
 			if(output[1]==0)
-                continue;
+              		  continue;
                 
-            var value_normalized =output[0]*scalefactor;
+            		var value_normalized =output[0]*scalefactor;
 		
 			
 			var tintcolor = $.Color("transparent").transition($.Color(subtype.color), value_normalized);
