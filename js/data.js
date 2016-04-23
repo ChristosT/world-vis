@@ -51,58 +51,6 @@ var iso_name_to_code = function(name) {
 };
 	
 	
-var makeNVD3Data = function(columnNames, filterFunction, aggFunc) {
-	if (typeof(columnNames) === "undefined") columnNames = null;
-	if (typeof(filterFunction) === "undefined") filterFunction = null;
-	if (typeof(aggFunc) === "undefined") {
-		aggFunc = function(a, b) {
-			return a + b;
-		};
-	}
-	
-	var numericalColumnNames = [];
-	var exampleRecord = dataset[selected][0];
-	Object.keys(exampleRecord).forEach(function(key) {
-		if (typeof(exampleRecord[key]) === "number") {
-			if (columnNames == null || columnNames.indexOf(key) != -1) numericalColumnNames.push(key);
-		}
-	});
-	if (numericalColumnNames.length == 0) return [];
-	
-	var workingSet = dataset[selected];
-	
-	workingSet.sort(function(a, b){
-		return (a.year - b.year);
-	});
-	workingSet = fold(function(acc, row) {
-		numericalColumnNames.forEach(function(name) {
-			acc.forEach(function(series, index) {
-				if (series.key == name) {
-					var lastitem = (series.values.length > 0 ? series.values[series.values.length - 1] : null);
-					if (lastitem != null && lastitem.x == row.yearnum) {
-						lastitem.y = aggFunc(lastitem.y, row[name]);
-					} else {
-						series.values.push({x: row.yearnum, y: row[name]});
-					}
-					acc[index] = series;
-				}
-			});
-		});
-		return acc;
-	}, (function() {
-		var innerArrays = [];
-		numericalColumnNames.forEach(function(name) {
-			innerArrays.push({
-				key: name,
-				values: []
-			});
-		});
-		return innerArrays;
-	})(), workingSet);
-	
-	//console.log(JSON.stringify(workingSet));
-	return workingSet;
-};
 
 var dataReady, onDataReady;
 (function(){
