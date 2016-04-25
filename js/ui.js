@@ -4,14 +4,19 @@
 
 var data_colors = d3.scale.category10();
 
-function GenerateGraph(svg,width,height,countryCode){
-	//http://bl.ocks.org/d3noob/38744a17f9c0141bcd04
-	var include_avg = 1; //should be zero
-  	d3.select("#continent_checkbox").on("change",function(){
-	                    if(this.checked)
-        		     {
-				include_avg =1;   //How to bind ???
-			   } });
+function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
+	var continent_checkbox = $("<input type='checkbox' id='continent_checkbox' checked><label for='continent_checkbox'> Show continent average</label>");
+	dialogJQ.prepend(continent_checkbox);
+	dialogJQ.find("#continent_checkbox").button();
+	dialogJQ.find("#continent_checkbox").on("change", function() {
+	if(this.checked) {	
+		svg.selectAll(".dot2").attr("r", 3.5);
+		svg.selectAll(".line2").attr("stroke-width", 2);
+	} else {
+		svg.selectAll(".dot2").attr("r", 0);
+		svg.selectAll(".line2").attr("stroke-width", 0);
+	}
+});
 	// Set the ranges
     var x = d3.scale.linear().range([0, width]);//.format("04d");
 	var y = d3.scale.linear().range([height, 0]);
@@ -64,15 +69,13 @@ function GenerateGraph(svg,width,height,countryCode){
     // Scale the range of the data
     x.domain([ d3.min(continent_plotdata,function(d) { return d.year; })-1,d3.max(continent_plotdata,function(d) { return d.year; })+1]);
    
-    if(include_avg)
-	{
+
+	
 		y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})])-0.5,
 		           d3.max([d3.max(country_plotdata,function(d) { return d.value;}),d3.max(continent_plotdata,function(d) { return d.value;})])]);
-	}
-	else
-	{
-		y.domain([ d3.min(country_plotdata,function(d) { return d.value;}) -0.5,d3.max(country_plotdata,function(d) { return d.value;})+0.5]);
-	}
+
+		//y.domain([ d3.min(country_plotdata,function(d) { return d.value;}) -0.5,d3.max(country_plotdata,function(d) { return d.value;})+0.5]);
+	
     // Add the paths.
     svg.append("path")
        .attr("d", valueline(country_plotdata))
@@ -80,15 +83,15 @@ function GenerateGraph(svg,width,height,countryCode){
        .attr("stroke-width", 2)
        .attr("fill", "none");
       
-    if(include_avg)
-    {
+
     svg.append("path")
        .attr("d", valueline(continent_plotdata))
+	   .attr("class", "line2")
        .attr("stroke",  data_colors.range()[selected])
        .attr("stroke-width", 2)
        .attr("fill", "none")
        .style("stroke-dasharray", ("3, 3"));   
-	}
+
     
     // Add the scatterplots
     svg.selectAll("dot")
@@ -98,15 +101,14 @@ function GenerateGraph(svg,width,height,countryCode){
         .attr("cx", function(d) { return x(d.year); })
         .attr("cy", function(d) { return y(d.value); });
     
-    if(include_avg)
-    {
+
     svg.selectAll("dot2")
         .data(continent_plotdata)
         .enter().append("circle")
+		.attr("class", "dot2")
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
         .attr("cy", function(d) { return y(d.value); });
-    }
 
 	svg.append("g")
       .attr("class", "x axis")
@@ -209,13 +211,13 @@ $(function(){
 			reader.onload = function(e) {
 				selected = subtypes.length;
 				var data = $.parseJSON(e.target.result);
-				console.log(dataset[selected])	;
+				
 				dataset[selected] = data.sort(function(a, b){
 					if(a.year != b.year) {
 						return a.year - b.year;
 					}
 				});
-				console.log(dataset[selected])	;			
+						
 				var firstyear = dataset[selected][0].year;
 				years_by_index[selected] = [];
 		
@@ -350,6 +352,7 @@ $(function(){
 	
 	// Set up toolbox buttons
 	$("#summarybox").dialog({
+		dialogClass: "summary_dialog",
 		modal: false,
 		autoOpen: true,
 		resizable: true,
@@ -362,6 +365,16 @@ $(function(){
         //remove x button
         //http://stackoverflow.com/a/7920871
         open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); }
+	});
+	$(".summary_dialog").children(".ui-dialog-titlebar").append("<span id='summary_toggle' class='ui-icon ui-icon-circle-minus' style='display:inline-block;float:right;cursor:pointer;'></span>");
+	$("#summary_toggle").click(function() {
+		if($(this).hasClass("ui-icon-circle-minus")) {
+			$("#summarybox").hide();
+			$(this).removeClass("ui-icon-circle-minus").addClass("ui-icon-circle-plus");
+		} else {
+			$("#summarybox").show();
+			$(this).removeClass("ui-icon-circle-plus").addClass("ui-icon-circle-minus");
+		}
 	});
 	$("#aboutbox").dialog({
 		modal: true,
@@ -390,7 +403,7 @@ $(function(){
 		
 		var countryCode = d3.select(this).attr("countryCode");
 		var updateChartFunction;
-		dialogJQ = $("<div class='countryPopoutDialog'>" + "<input type=\"checkbox\" id=\"#continent_checkbox\"><label > Show continent average</label>	</div>");
+		dialogJQ = $("<div class='countryPopoutDialog' id='graphdialog'></div>");
 		//dialogJQ.append($("<div class='xLabel'>Years</div>"));
         //dialogJQ.append($("<div class='yLabel'>"+currentSubtypeSet.prettyname+"</div>"));
 		
@@ -406,7 +419,7 @@ $(function(){
                     .append("g")
                     .attr("transform", 
                     "translate(" + margin.left + "," + margin.top + ")");
-        GenerateGraph(svg,width,height,countryCode);
+        GenerateGraph(dialogJQ,svg,width,height,countryCode);
         
 /*
 		var updateChartFunction = function() {};
