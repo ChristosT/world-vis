@@ -124,10 +124,12 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
        .attr("fill", "none")
        .style("stroke-dasharray", ("3, 3"));   
 
+    
+    // Add the scatterplots
     svg.selectAll("dot")
         .data(country_plotdata)
         .enter().append("circle")
-        .attr("class","dot")
+		.attr("class", "dot")
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
         .attr("cy", function(d) { return y(d.value); })
