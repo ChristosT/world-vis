@@ -62,7 +62,7 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode,dataset_index) {
 	}
 
     // Scale the range of the data
-     maxYear = -1*Number.MAX_VALUE;
+    maxYear = -1*Number.MAX_VALUE;
     minYear =    Number.MAX_VALUE;
     for(var i=0;i<number_of_loaded_datasets;i++)
     {
@@ -70,14 +70,14 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode,dataset_index) {
         {
             minYear = years_by_index[i][0].year;
         }
-        
+   
         if(years_by_index[i].slice(-1)[0].year>maxYear)
         {
             maxYear = years_by_index[i].slice(-1)[0].year;
         }
     }
 
-
+	
     x.domain([ minYear -1,maxYear+1]); 
 
     var country_ymin   =  d3.min(country_plotdata,function(d) {return d.value;});
@@ -173,6 +173,8 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
 	  
 
 };
+
+
 
 
 (function(){
@@ -452,7 +454,7 @@ $(function(){
                     .append("g")
                     .attr("transform", 
                     "translate(" + margin.left + "," + margin.top + ")");
-        
+         
         GenerateGraph(dialogJQ,svgs[0],width,height,countryCode,selected);
         for(var j=0;j<number_of_loaded_datasets;j++)
         {
