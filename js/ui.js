@@ -437,6 +437,7 @@ $(function(){
 			height: 415,
 			close: function(event, ui) {
 				//$(document).unbind("flunet-update", updateChartFunction);
+                dialogJQ.find("#continent_checkbox").removeAttr("id");
 				dialogJQ = null;
 			}
 		});
