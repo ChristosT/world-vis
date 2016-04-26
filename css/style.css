@@ -354,7 +354,15 @@ body {
 	float: none;
 }
 
-#aboutbox, #summarybox {
+#about{
+    width: 65px; 
+    height: 50px; 
+	text-align: center;
+	position: absolute;
+
+}
+
+#aboutbox{
 	display:none;
 	background-color: white !important;
 	border-radius: 5x;
@@ -363,6 +371,9 @@ body {
 }
 
 #summarybox {
+	display:none;
+	background-color: white !important;
+	border-radius: 5x;
 	text-align: center;
 	font-size: 1em;
     overflow: auto;
@@ -392,11 +403,5 @@ body {
     stroke: grey;
     stroke-width: 1;
     shape-rendering: crispEdges;
-}
-.tooltip {
-  position: absolute;
-  width: 200px;
-  height: 28px;
-  pointer-events: none;
 }
 
