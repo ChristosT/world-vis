@@ -388,8 +388,8 @@ $(function(){
 		show: true,
 		height: 178,
 		width: 300,
-		position: "right",
 		title: "Summary",
+        position:"right,top",
         //remove x button
         //http://stackoverflow.com/a/7920871
         open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); }
@@ -398,9 +398,11 @@ $(function(){
 	$("#summary_toggle").click(function() {
 		if($(this).hasClass("ui-icon-circle-minus")) {
 			$("#summarybox").hide();
+			$(".summary_dialog").height(32);
 			$(this).removeClass("ui-icon-circle-minus").addClass("ui-icon-circle-plus");
 		} else {
 			$("#summarybox").show();
+			$(".summary_dialog").height($("#summarybox").height() +50);
 			$(this).removeClass("ui-icon-circle-plus").addClass("ui-icon-circle-minus");
 		}
 	});
