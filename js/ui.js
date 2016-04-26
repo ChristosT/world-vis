@@ -124,24 +124,64 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
        .attr("fill", "none")
        .style("stroke-dasharray", ("3, 3"));   
 
-    
-    // Add the scatterplots
     svg.selectAll("dot")
         .data(country_plotdata)
         .enter().append("circle")
-		.attr("class", "dot")
+        .attr("class","dot")
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
-        .attr("cy", function(d) { return y(d.value); });
+        .attr("cy", function(d) { return y(d.value); })
+        .on("mouseover",function(d){
+             svg.append("rect")
+                .attr("id","tooltip2")
+                .style("position", "absolute")
+                .attr("x", x(d.year)-12)
+                .attr("y", y(d.value) + 10)
+                .attr("rx", 10)
+                .attr("ry", 10)
+                .attr("width", 200)
+                .attr("height", 25)
+                .style("fill","#999999")  
+         
+            svg.append("text")
+               .attr("id","tooltip")
+               .style("position", "absolute")
+               .attr("x", x(d.year)-5)
+               .attr("y", y(d.value) +25)
+               .text("["+ "Value:"+ (d.value).toFixed(2)  +","+"Year:"+d.year+ "]")
+        })
+        .on("mouseout", function() {d3.select("#tooltip").remove(), d3.select("#tooltip2").remove()}) ;  
     
 
     svg.selectAll("dot2")
         .data(continent_plotdata)
         .enter().append("circle")
 		.attr("class", "dot2")
+		.attr("fill", "grey")
+		.attr("stroke", "grey")
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
-        .attr("cy", function(d) { return y(d.value); });
+        .attr("cy", function(d) { return y(d.value); })
+        .on("mouseover",function(d){
+             svg.append("rect")
+                .attr("id","tooltip2")
+                .style("position", "absolute")
+                .attr("x", x(d.year)-12)
+                .attr("y", y(d.value) + 10)
+                .attr("rx", 10)
+                .attr("ry", 10)
+                .attr("width", 200)
+                .attr("height", 25)
+                .style("fill","#999999")  
+         
+            svg.append("text")
+               .attr("id","tooltip")
+               .style("position", "absolute")
+               .attr("x", x(d.year)-5)
+               .attr("y", y(d.value) +25)
+               .text("["+ "Value:"+ (d.value).toFixed(2)  +","+"Year:"+d.year+ "]")
+        })
+        .on("mouseout", function() {d3.select("#tooltip").remove(), d3.select("#tooltip2").remove()}) ;  
 
 	svg.append("g")
       .attr("class", "x axis")
