@@ -3,27 +3,21 @@
 
 
 var data_colors = d3.scale.category10();
+//functions
+var updateUIForYearNum, playFunction, pauseFunction;
 
-function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
-	var continent_checkbox = $("<input type='checkbox' id='continent_checkbox' checked><label for='continent_checkbox'> Show continent average</label>");
-	dialogJQ.prepend(continent_checkbox);
-	dialogJQ.find("#continent_checkbox").button();
-	dialogJQ.find("#continent_checkbox").on("change", function() {
-	if(this.checked) {	
-		svg.selectAll(".dot2").attr("r", 3.5);
-		svg.selectAll(".line2").attr("stroke-width", 2);
-	} else {
-		svg.selectAll(".dot2").attr("r", 0);
-		svg.selectAll(".line2").attr("stroke-width", 0);
-	}
-});
+var subtypes = [];
+var currentSubtypeSet = null;
+var subtypeChangeCounter = 0;
+var currentYearIndex =0;
+function GenerateGraph(dialogJQ,svg,width,height,countryCode,dataset_index) {
 	// Set the ranges
     var x = d3.scale.linear().range([0, width]);//.format("04d");
 	var y = d3.scale.linear().range([height, 0]);
 
 	// Define the axes
 	var xAxis = d3.svg.axis().scale(x)
-    	.orient("bottom").ticks(maxYearIndex()/2).tickFormat(d3.format("d"));
+    .orient("bottom").ticks(10).tickFormat(d3.format("d"));
     
 	var yAxis = d3.svg.axis().scale(y)
     	.orient("left").ticks(8);
@@ -38,23 +32,23 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
 	var continent_plotdata  = [];
 	var continent = list_Continent[countryCode];
 	var datapoint;
-	for (var yearindex = 0;yearindex<=maxYearIndex();yearindex++)
+	for (var yearindex = 0;yearindex<= years_by_index[dataset_index].length;yearindex++)
 	{
     	datapoint =  {value:-1,year:1888};
-   		datapoint.value = dataset[selected].where(function(row){return (row.country == countryCode) && (row.yearindex == yearindex);})
+   		datapoint.value = dataset[dataset_index].where(function(row){return (row.country == countryCode) && (row.yearindex == yearindex);})
 			                               .select(function(row){return row.value});
     
-	    datapoint.year = yearForYearIndex(yearindex).year;
+	    
 
 	    if(datapoint.value.length != 0)
 	    {
        		datapoint.value=datapoint.value[0];
+	        datapoint.year = years_by_index[dataset_index][yearindex].year;
 	        country_plotdata.push(datapoint);
 	    }
 
 	    datapoint =  {value:-1,year:1888};
-	    datapoint.year = yearForYearIndex(yearindex).year;
-	    datapoint.value = dataset_Continent[selected].where(function(row){return (row.continent == continent) && (row.yearindex == yearindex) &&(row.valid==1);})
+	    datapoint.value = dataset_Continent[dataset_index].where(function(row){return (row.continent == continent) && (row.yearindex == yearindex) &&(row.valid==1);})
        							                     .select(function(row){return row.value});
     
 
@@ -62,24 +56,62 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
 	    if(datapoint.value.length != 0)
 	    {
        		datapoint.value=datapoint.value[0];
+	        datapoint.year = years_by_index[dataset_index][yearindex].year;
 	        continent_plotdata.push(datapoint);
    		} 
 	}
 
     // Scale the range of the data
-    x.domain([ d3.min(continent_plotdata,function(d) { return d.year; })-1,d3.max(continent_plotdata,function(d) { return d.year; })+1]);
+     maxYear = -1*Number.MAX_VALUE;
+    minYear =    Number.MAX_VALUE;
+    for(var i=0;i<number_of_loaded_datasets;i++)
+    {
+        if(years_by_index[i][0].year<minYear)
+        {
+            minYear = years_by_index[i][0].year;
+        }
+        
+        if(years_by_index[i].slice(-1)[0].year>maxYear)
+        {
+            maxYear = years_by_index[i].slice(-1)[0].year;
+        }
+    }
+
+
+    x.domain([ minYear -1,maxYear+1]); 
+
+    var country_ymin   =  d3.min(country_plotdata,function(d) {return d.value;});
+    var country_ymax   =  d3.max(country_plotdata,function(d) {return d.value;});
+    var continent_ymin =  d3.min([country_ymin,d3.min(continent_plotdata,function(d) { return d.value;})]);
+    var continent_ymax =  d3.max([country_ymax,d3.max(continent_plotdata,function(d) { return d.value;})]);
+    y.domain([ continent_ymin - 0.5,continent_ymax +0.5]);
    
+dialogJQ.find("#continent_checkbox").button();
+dialogJQ.find("#continent_checkbox").on("change", function() {
+	if(this.checked) {	
+    	y.domain([ continent_ymin - 0.5,continent_ymax +0.5]);
+        svg.selectAll(".y.axis").transition().duration(300).call(yAxis);
+        svg.selectAll(".dot").transition().duration(300).attr("cy", function(d) { return y(d.value); })
+		svg.selectAll(".line").transition().duration(300).attr("d", valueline(country_plotdata))
+		svg.selectAll(".dot2").transition().duration(300).attr("r", 3.5);
+		svg.selectAll(".line2").transition().duration(300).attr("stroke-width", 2);
 
+	} else {
 	
-		y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})])-0.5,
-		           d3.max([d3.max(country_plotdata,function(d) { return d.value;}),d3.max(continent_plotdata,function(d) { return d.value;})])]);
-
-		//y.domain([ d3.min(country_plotdata,function(d) { return d.value;}) -0.5,d3.max(country_plotdata,function(d) { return d.value;})+0.5]);
+    	y.domain([country_ymin -0.5,country_ymax +0.5]);
+        svg.selectAll(".y.axis").transition().duration(300).call(yAxis);
+        svg.selectAll(".dot").transition().duration(300).attr("cy", function(d) { return y(d.value); })
+		svg.selectAll(".line").transition().duration(300).attr("d", valueline(country_plotdata))
+		svg.selectAll(".dot2").transition().duration(300).attr("r", 0);
+		svg.selectAll(".line2").transition().duration(300).attr("stroke-width", 0);
+	}
+});
 	
     // Add the paths.
     svg.append("path")
        .attr("d", valueline(country_plotdata))
-       .attr("stroke",  data_colors.range()[selected])
+	   .attr("class", "line")
+       .attr("stroke",  data_colors.range()[dataset_index])
        .attr("stroke-width", 2)
        .attr("fill", "none");
       
@@ -87,7 +119,7 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
     svg.append("path")
        .attr("d", valueline(continent_plotdata))
 	   .attr("class", "line2")
-       .attr("stroke",  data_colors.range()[selected])
+       .attr("stroke",  data_colors.range()[dataset_index])
        .attr("stroke-width", 2)
        .attr("fill", "none")
        .style("stroke-dasharray", ("3, 3"));   
@@ -97,6 +129,7 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
     svg.selectAll("dot")
         .data(country_plotdata)
         .enter().append("circle")
+		.attr("class", "dot")
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
         .attr("cy", function(d) { return y(d.value); });
@@ -136,19 +169,11 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
       .style("text-anchor", "middle")
 	  .style("font-weight","bold")
 	  .style("font-size","12px")
-      .text(currentSubtypeSet.prettyname);
+      .text(subtypes[dataset_index].prettyname);
 	  
 
 };
 
-
-//functions
-var updateUIForYearNum, playFunction, pauseFunction;
-
-var subtypes = [];
-var currentSubtypeSet = null;
-var subtypeChangeCounter = 0;
-var currentYearIndex =0;
 
 (function(){
 	var _yearnum = null;
@@ -233,7 +258,7 @@ $(function(){
 					row.yearindex = maxYearIndex();
 					row.scalefactors = {};
 					}				
-				console.log(JSON.stringify(years_by_index[selected]));
+				//console.log(JSON.stringify(years_by_index[selected]));
 				
 				subtypes.push({name: "value", prettyname: filename, color: data_colors(selected), id: selected});
 				currentSubtypeSet = subtypes[selected];
@@ -284,6 +309,7 @@ $(function(){
 			
 			reader.readAsText(e.target.files.item(0));
 	
+    		number_of_loaded_datasets++;
 		}
 
 		this.value = null;
@@ -407,20 +433,42 @@ $(function(){
 		//dialogJQ.append($("<div class='xLabel'>Years</div>"));
         //dialogJQ.append($("<div class='yLabel'>"+currentSubtypeSet.prettyname+"</div>"));
 		
+	var continent_checkbox = $("<input type='checkbox' id='continent_checkbox' checked><label for='continent_checkbox'> Show continent average</label>");
+		dialogJQ.prepend(continent_checkbox);
         //set up svg for graph
-        var margin = {top: 30, right: 20, bottom: 30, left: 70},
+        var margin = {top: 30, right: 20, bottom: 50, left: 70},
                     width = 750 - margin.left - margin.right,
                     height = 315 - margin.top - margin.bottom;
       
-        var svg = d3.select(dialogJQ.get()[0])
+        //Create a svg array 
+        var svgs = new Array(number_of_loaded_datasets);
+        
+       //set up continent checkbox only once.
+        //Generate first the graph for the selected datasets.
+        svgs[0] = d3.select(dialogJQ.get()[0])
                     .append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)
                     .append("g")
                     .attr("transform", 
                     "translate(" + margin.left + "," + margin.top + ")");
-        GenerateGraph(dialogJQ,svg,width,height,countryCode);
         
+        GenerateGraph(dialogJQ,svgs[0],width,height,countryCode,selected);
+        for(var j=0;j<number_of_loaded_datasets;j++)
+        {
+            if(j==selected)
+                continue;
+
+
+            svgs[j] = d3.select(dialogJQ.get()[0])
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", 
+                    "translate(" + margin.left + "," + margin.top + ")");
+            GenerateGraph(dialogJQ,svgs[j],width,height,countryCode,j);
+       } 
 /*
 		var updateChartFunction = function() {};
   
@@ -430,6 +478,9 @@ $(function(){
 		//	updateChartFunction();
 		*/
 		dialogJQ.dialog({
+		    resizable: true,
+		    draggable: true,
+            modal:true,
 			title: iso_code_to_name(countryCode),
 			minWidth: 850,
 			minHeight: 415,

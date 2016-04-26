@@ -2,6 +2,7 @@
 // reading in data for flunet vis
 
 var selected = 0;
+var number_of_loaded_datasets=0;
 var dataset = new Array(10);
 var dataset_Continent = new Array(10);
 

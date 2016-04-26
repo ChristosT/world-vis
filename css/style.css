@@ -313,8 +313,9 @@ body {
 }
 
 .countryPopoutDialog {
-	padding-left: 50px !important;
+	padding-left: 30px !important;
 	padding-bottom: 15px !important;
+    overflow-y: auto !important;
 }
 
 .countryPopoutDialog .yLabel {
@@ -364,6 +365,7 @@ body {
 #summarybox {
 	text-align: center;
 	font-size: 1em;
+    overflow: auto;
     /*
     resize: both;
     overflow: auto;

@@ -17,7 +17,6 @@ function clearCountryColors() {
 }
 
 var updateMapStylesForYear = function (year) {
-console.log(year);
 	if(continent_selected == 0)
 	{
 	var colorFunc = function(row) {
@@ -95,7 +94,6 @@ console.log(year);
 			});
 			
 			var countrycolor = Color_mixer.mix(finalMix);
-			//console.log(country)
 			colorCountry(country, countrycolor.toHexString());
 		}
 		
