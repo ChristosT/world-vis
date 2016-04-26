@@ -5,25 +5,13 @@
 var data_colors = d3.scale.category10();
 
 function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
-	var continent_checkbox = $("<input type='checkbox' id='continent_checkbox' checked><label for='continent_checkbox'> Show continent average</label>");
-	dialogJQ.prepend(continent_checkbox);
-	dialogJQ.find("#continent_checkbox").button();
-	dialogJQ.find("#continent_checkbox").on("change", function() {
-	if(this.checked) {	
-		svg.selectAll(".dot2").attr("r", 3.5);
-		svg.selectAll(".line2").attr("stroke-width", 2);
-	} else {
-		svg.selectAll(".dot2").attr("r", 0);
-		svg.selectAll(".line2").attr("stroke-width", 0);
-	}
-});
 	// Set the ranges
     var x = d3.scale.linear().range([0, width]);//.format("04d");
 	var y = d3.scale.linear().range([height, 0]);
 
 	// Define the axes
 	var xAxis = d3.svg.axis().scale(x)
-    	.orient("bottom").ticks(maxYearIndex()/2).tickFormat(d3.format("d"));
+    .orient("bottom").ticks(10).tickFormat(d3.format("d"));
     
 	var yAxis = d3.svg.axis().scale(y)
     	.orient("left").ticks(8);
@@ -67,18 +55,38 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
 	}
 
     // Scale the range of the data
-    x.domain([ d3.min(continent_plotdata,function(d) { return d.year; })-1,d3.max(continent_plotdata,function(d) { return d.year; })+1]);
+    x.domain([ d3.min(continent_plotdata,function(d) { return d.year; }),d3.max(continent_plotdata,function(d) { return d.year; })]);
+    var country_ymin   =  d3.min(country_plotdata,function(d) {return d.value;});
+    var country_ymax   =  d3.max(country_plotdata,function(d) {return d.value;});
+    var continent_ymin =  d3.min([country_ymin,d3.min(continent_plotdata,function(d) { return d.value;})]);
+    var continent_ymax =  d3.max([country_ymax,d3.max(continent_plotdata,function(d) { return d.value;})]);
+    y.domain([ continent_ymin - 0.5,continent_ymax +0.5]);
    
+dialogJQ.find("#continent_checkbox").button();
+dialogJQ.find("#continent_checkbox").on("change", function() {
+	if(this.checked) {	
+    	y.domain([ continent_ymin - 0.5,continent_ymax +0.5]);
+        svg.selectAll(".y.axis").transition().duration(300).call(yAxis);
+        svg.selectAll(".dot").transition().duration(300).attr("cy", function(d) { return y(d.value); })
+		svg.selectAll(".line").transition().duration(300).attr("d", valueline(country_plotdata))
+		svg.selectAll(".dot2").transition().duration(300).attr("r", 3.5);
+		svg.selectAll(".line2").transition().duration(300).attr("stroke-width", 2);
 
+	} else {
 	
-		y.domain([ d3.min([d3.min(country_plotdata,function(d) { return d.value;}),d3.min(continent_plotdata,function(d) { return d.value;})])-0.5,
-		           d3.max([d3.max(country_plotdata,function(d) { return d.value;}),d3.max(continent_plotdata,function(d) { return d.value;})])]);
-
-		//y.domain([ d3.min(country_plotdata,function(d) { return d.value;}) -0.5,d3.max(country_plotdata,function(d) { return d.value;})+0.5]);
+    	y.domain([country_ymin -0.5,country_ymax +0.5]);
+        svg.selectAll(".y.axis").transition().duration(300).call(yAxis);
+        svg.selectAll(".dot").transition().duration(300).attr("cy", function(d) { return y(d.value); })
+		svg.selectAll(".line").transition().duration(300).attr("d", valueline(country_plotdata))
+		svg.selectAll(".dot2").transition().duration(300).attr("r", 0);
+		svg.selectAll(".line2").transition().duration(300).attr("stroke-width", 0);
+	}
+});
 	
     // Add the paths.
     svg.append("path")
        .attr("d", valueline(country_plotdata))
+	   .attr("class", "line")
        .attr("stroke",  data_colors.range()[selected])
        .attr("stroke-width", 2)
        .attr("fill", "none");
@@ -97,6 +105,7 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode) {
     svg.selectAll("dot")
         .data(country_plotdata)
         .enter().append("circle")
+		.attr("class", "dot")
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.year); })
         .attr("cy", function(d) { return y(d.value); });
