@@ -10,7 +10,7 @@ var continents =["AF", "AS" ,"OC" ,"EU", "NA", "SA", "AN"];
 
 var years_by_index = new Array(10);
 
-var continent_selected = 1; //continent filter flag
+var continent_selected = 0; //continent filter flag
 
 //functions
 var maxYearNum, maxYearIndex, yearNumForYear, yearForYearNum, yearIndexForYear, yearForYearIndex = [];

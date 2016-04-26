@@ -416,10 +416,7 @@ $(function(){
 		title: "About This Program"
 	});
 	$("#about").button({
-		text:false,
-		icons:{
-			primary: "ui-icon-help"
-		}
+		text:true
 	}).click(function(event,ui){
 		$("#aboutbox").dialog("open");
 	});
