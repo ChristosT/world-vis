@@ -105,19 +105,40 @@
 	  </div>
 	</div>
 	<div id="aboutbox">
-	  <p>The World Health Organization's Global Influenza Surveillance and Response System (GISRS) has been in operation since 1995, and aggregates infected sample data weekly from laboratories and flu centers around the world. The FluNet website was constructed to provide access to this data, but the ability to visualize this data is limited by its outdated, inefficient front-end. This is a fresh visualization built around the GISRS data, showing the propagation of influenza across the globe over time.</p>
-	  <h3>Data</h3>
-	  <p>All the data used in this tool can be downloaded here:</p>
+      <h3>Usage</h3>
+      <p>Upload a json file with the fields "value" , "year" and "country code" where country code is the three letter ISO 3166 code or use one of the example files below. </p>
+      <ul>
+        <li>The choropleth map will be colored according to the current year's data. The play button on the bottom animates the change of the value over the years. </li>
+        <li>The continent button colors the countries according to the continent's (unweighted) average . 
+        <li>The summary box provides a quick view over the most important statistics of the dataset.</li>
+        <li>Clicking any country brings up a line graph of the current dataset for the selected country along with the continent's average </li>
+      </ul>
+       <p> The user can upload multiple datasets. Each of them has its own color which is used as base color for the choropleth map but also the line graphs.
+           When more than one dataset is loaded, clicking any country will bring up line charts of all the datasets in a single view. </p>
+          
+    <h3>Data</h3>
+	  <p>All the datasets used in this tool were acquired from <a href="http://data.worldbank.org/" target="blank">http://data.worldbank.org/</a>
+      some example files can be found in:</p>
 	  <p>
-	    <a href="data/flunet_data.json">JSON</a>
-	    <a href="data/flunet_data.json.gz">JSON (GZipped)</a>
-	    <a href="data/flunet_data.xlsx">Microsoft Excel</a>
+	    <a href="data/examples/" target="blank">Example Data</a>
 	  </p>
+       <h3>Developer's Notes</h3>
+       <p> The complete source code is hosted on github <a href="https://github.com/ChristosT/world-vis" target="blank">https://github.com/ChristosT/world-vis</a>.
+       Under the /data directory the population.json and area.json files can be used for cretaing weighted averages or other interesting statistics.</p>
+       
 	  <h3>Acknowledgements</h3>
-	  <p>We would like to thank the World Health Organization (WHO) for the GISRS and the data it provides. Despite our overall low opinion of the frontend applied to it, the effort that has gone into collecting this data is clearly Herculean, and the data itself is an invaluable contribution to science. We hope that our work will produce more public interest in the WHO’s scientific efforts.</p>
-	  <p>We would also like to thank the World Bank and the United States Census Bureau for providing the population and area data used in our dynamic filters.</p>
-	  <p>The United Nations Statistics Division provided the mappings of ISO 3166-1 alpha-3 codes to names, which are used to pair GISRS data with geographic regions.
-	  </p>
+      <p>
+      This projects is an extension of the WorldVis, FluNet Visualization tool  which can be found at 
+      <a href="http://www.cs.odu.edu/~mweigle/research/world-vis/" target="blank">http://www.cs.odu.edu/~mweigle/research/world-vis/</a>.
+      </p>
+      Juliette Pardue, Mridul Sen & Christos Tsolakis, Spring 2016
+
+
+      </p>
+      </br>
+      </br>
+      </br>
+      </br>
 	  <h3>Open Source Licenses</h3>
 	  <h4>jQuery, jQuery UI, jquery-color</h4>
 	  <pre>Copyright 2013 jQuery Foundation and other contributors,
@@ -187,19 +208,7 @@
 	  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 	  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
-	  <h4>NVD3</h4>
-	  <pre>Copyright (c) 2011, 2012 Novus Partners, Inc.
-	  
-	  Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-	  this file except in compliance with the License. You may obtain a copy of the
-	  License at
-	  
-	  http://www.apache.org/licenses/LICENSE-2.0
-	  
-	  Unless required by applicable law or agreed to in writing, software distributed
-	  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-	  CONDITIONS OF ANY KIND, either express or implied. See the License for the
-	  specific language governing permissions and limitations under the License.</pre>
+	 
 	</div>
 
     <div id="summarybox">
