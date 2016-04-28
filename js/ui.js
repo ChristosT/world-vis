@@ -9,7 +9,7 @@ var updateUIForYearNum, playFunction, pauseFunction;
 var subtypes = [];
 var currentSubtypeSet = null;
 var subtypeChangeCounter = 0;
-var currentYearIndex =0;
+var currentYearIndex =-1;
 function GenerateGraph(dialogJQ,svg,width,height,countryCode,dataset_index) {
 	// Set the ranges
     var x = d3.scale.linear().range([0, width]);//.format("04d");
@@ -280,20 +280,22 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
 		}
 		_playTimeout = setTimeout(playFunction, 500);
 		
-		updateUIForYearNum(_yearnum < years_by_index[selected].length-1 ? _yearnum+1 : 0);
+		updateUIForYearNum(_yearnum < years_by_index[selected].length-1 ? _yearnum+1 : 1);
 	};
 	pauseFunction = function() {
 		if (_playTimeout != null) {
 			clearTimeout(_playTimeout);
 			_playTimeout = null;
-			$("#play").button("option", {
+			
+			};
+            $("#play").button("option", {
 				label: "play",
 				icons: {
 					primary: "ui-icon-play"
-				}
-			});
+				} });
 		}
-	};
+	
+        
 })();
 
 yellINeedToLoad();
@@ -404,7 +406,9 @@ $(function(){
 	$("#country").click(function() {
 		
 		  continent_selected=0;
-		  updateMapStylesForYear(yearForYearIndex(currentYearIndex).year);
+          
+          console.log(yearForYearIndex(currentYearIndex+1).year)
+		  updateMapStylesForYear(yearForYearIndex(currentYearIndex+1).year);
 		
 		  // $("#globecontainer").fadeOut(1000, function() {
 				   //setGlobeVelocity([0, 0, 0]);
@@ -414,8 +418,9 @@ $(function(){
 	$("#continent").click(function() {
 		
 		 continent_selected=1;
-		 console.log(yearForYearIndex(currentYearIndex));
-		 updateMapStylesForYear(yearForYearIndex(currentYearIndex).year);
+                  console.log(yearForYearIndex(currentYearIndex+1).year)
+		 updateMapStylesForYear(yearForYearIndex(currentYearIndex+1).year);
+
 		   //if (!($("#globec7ontainer").is(":visible"))) setGlobeAngle([0, -30, 0]);
 		  // setGlobeVelocity([0.01, 0, 0]);
 		  // $("#mapcontainer").fadeOut(1000);
@@ -460,7 +465,6 @@ $(function(){
 			pauseFunction();
 		}
     });
-	
 	// Set up toolbox buttons
 	$("#summarybox").dialog({
 		dialogClass: "summary_dialog",
@@ -496,7 +500,7 @@ $(function(){
 		draggable: false,
 		show: true,
 		height: 600,
-		width: 800,
+		width: 855,
 		position: "center",
 		title: "About This Program"
 	});
