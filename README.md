@@ -6,9 +6,10 @@ Juliette Pardue, Mridul Sen & Christos Tsolakis
 
 
 
-Open Source Licenses
 
-jQuery, jQuery UI, jquery-color
+###Open Source Licenses
+
+####jQuery, jQuery UI, jquery-color
 
 Copyright 2013 jQuery Foundation and other contributors,
 
@@ -33,7 +34,8 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-query-mousefling
+####query-mousefling
+
 Copyright (c) 2012, Luke Siedle
 All rights reserved.
 
@@ -57,7 +59,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-D3
+####D3
 
 Copyright 2013 Mike Bostock. All rights reserved.
       
