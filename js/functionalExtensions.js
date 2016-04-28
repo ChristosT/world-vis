@@ -43,14 +43,7 @@ Array.prototype.select = function (f) {
 	return map(f, this);
 };
 
-// Find unique values of an attribute in a list of objects 
-// source : http://www.shamasis.net/2009/09/fast-algorithm-to-find-unique-items-in-javascript-array/
-Array.prototype.unique = function(attr) {
-    var o = {}, i, l = this.length, r = [];
-    for(i=0; i<l;i+=1) o[this[i][attr]] = this[i][attr];
-    for(i in o) r.push(o[i]);
-    return r;
-};
+
 
 //http://stackoverflow.com/questions/1669190/javascript-min-max-array-values
 Array.prototype.max = function () {
@@ -65,6 +58,13 @@ Array.prototype.sum = function(){
     return this.reduce(function(a,b) {return a+b ;})
 };
 
+Array.prototype.sum = function (prop) {
+    var total = 0
+    for ( var i = 0, _len = this.length; i < _len; i++ ) {
+        total += this[i][prop]
+    }
+    return total
+}
 
 Array.prototype.mean = function(){ 
     return  this.sum()/this.length; 

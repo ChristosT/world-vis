@@ -405,3 +405,10 @@ body {
     shape-rendering: crispEdges;
 }
 
+/*table */
+td{
+border-top:1px solid black;
+padding-bottom:0;
+padding-top:0;
+
+}
