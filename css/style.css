@@ -143,7 +143,31 @@ body {
 
 #play {
 	position: absolute;
+	left: 110px;
+	width: 40px;
+	top: 0;
+	height: 50px;
+	bottom: 0;
+}
+#reset {
+	position: absolute;
+	left: 10px;
+	width: 40px;
+	top: 0;
+	height: 50px;
+	bottom: 0;
+}
+#previous {
+	position: absolute;
 	left: 60px;
+	width: 40px;
+	top: 0;
+	height: 50px;
+	bottom: 0;
+}
+#next {
+	position: absolute;
+	left: 160px;
 	width: 40px;
 	top: 0;
 	height: 50px;
@@ -153,7 +177,7 @@ body {
 #slidercontainer_inner {
 	position: absolute;
 	top: 0;
-	left: 105px;
+	left: 215px;
 	bottom: 0;
 	right: 10px;
 }

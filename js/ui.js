@@ -4,7 +4,7 @@
 
 var data_colors = d3.scale.category10();
 //functions
-var updateUIForYearNum, playFunction, pauseFunction;
+var updateUIForYearNum, playFunction, resetFunction, pauseFunction,nextFunction,previousFunction;
 
 var subtypes = [];
 var currentSubtypeSet = null;
@@ -280,7 +280,7 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
 		}
 		_playTimeout = setTimeout(playFunction, 500);
 		
-		updateUIForYearNum(_yearnum < years_by_index[selected].length-1 ? _yearnum+1 : 1);
+		updateUIForYearNum(_yearnum < years_by_index[selected].length-1 ? _yearnum+1 : 0);
 	};
 	pauseFunction = function() {
 		if (_playTimeout != null) {
@@ -295,7 +295,52 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
 				} });
 		}
 	
+    resetFunction = function(){
+
+        if (_playTimeout != null) {
+			clearTimeout(_playTimeout);
+			_playTimeout = null;
+            $("#play").button("option", {
+				label: "play",
+				icons: {
+					primary: "ui-icon-play"
+				}
+			});
+        }     
+               updateUIForYearNum(0);
+        };
+    nextFunction = function(){
+
+        if (_playTimeout != null) {
+			clearTimeout(_playTimeout);
+			_playTimeout = null;
+            $("#play").button("option", {
+				label: "play",
+				icons: {
+					primary: "ui-icon-play"
+				}
+			});
+        }      
+                
+               updateUIForYearNum(_yearnum +1 < years_by_index[selected].length ? _yearnum+1 : 0);
+        };
         
+    previousFunction = function(){
+
+        if (_playTimeout != null) {
+			clearTimeout(_playTimeout);
+			_playTimeout = null;
+            $("#play").button("option", {
+				label: "play",
+				icons: {
+					primary: "ui-icon-play"
+				}
+			});
+        }      
+        updateUIForYearNum(_yearnum -1 >=0? _yearnum-1 :years_by_index[selected].length);
+         
+               
+        };
 })();
 
 yellINeedToLoad();
@@ -464,6 +509,31 @@ $(function(){
 		} else {
 			pauseFunction();
 		}
+    });
+	$("#reset").button({
+		text: false,
+		icons: {
+			primary: "ui-icon-radio-off"
+		}
+	}).click(function() {
+        resetFunction();
+    });
+    $("#previous").button({
+		text: false,
+		icons: {
+			primary: "ui-icon-carat-1-w"
+		}
+	}).click(function() {
+        previousFunction();
+    });
+    
+    $("#next").button({
+		text: false,
+		icons: {
+			primary: "ui-icon-carat-1-e"
+		}
+	}).click(function() {
+        nextFunction();
     });
 	// Set up toolbox buttons
 	$("#summarybox").dialog({
