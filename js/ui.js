@@ -17,10 +17,13 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode,dataset_index) {
 
 	// Define the axes
 	var xAxis = d3.svg.axis().scale(x)
-    .orient("bottom").ticks(10).tickFormat(d3.format("d"));
+    .orient("bottom").ticks(10).tickFormat(d3.format("4d"));
     
 	var yAxis = d3.svg.axis().scale(y)
-    	.orient("left").ticks(8);
+    	.orient("left")
+        .ticks(6)
+        .tickFormat(d3.format(".2s"));
+        //.tickFormat(d3.format(".2f"));
 
 	// Define the line
 	var valueline = d3.svg.line()
@@ -217,7 +220,7 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
                .text("["+ "Value:"+ (d.value).toFixed(2)  +","+"Year:"+d.year+ "]")
         })
         .on("mouseout", function() {d3.select("#tooltip").remove(), d3.select("#tooltip2").remove()}) ;  
-
+  // x-axis
 	svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
@@ -228,7 +231,7 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
       .attr("y", 40)
       .style("text-anchor", "middle")
 	  .style("font-weight","bold")
-	  .style("font-size","14px")
+	  .style("font-size","12px")
       .text("Year");
 
   // y-axis
@@ -238,12 +241,11 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
     .append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
-	  .attr("y", -50)
+	  .attr("y", -60)
 	  .attr("x", -height/2)
       .attr("dy", "-.11em")
       .style("text-anchor", "middle")
-	  .style("font-weight","bold")
-	  .style("font-size","12px")
+	  .style("font-size","10px")
       .text(subtypes[dataset_index].prettyname);
 	  
 
@@ -257,9 +259,9 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
 	updateUIForYearNum = function(yearnum) {
 		_yearnum = yearnum;
 		currentYearIndex = yearnum-1;
-		$(document).trigger("flunet-update");
+		$(document).trigger("update");
 	};
-	$(document).on("flunet-update", function(){
+	$(document).on("update", function(){
 		var year = yearForYearNum(_yearnum);
 		$("#timelabel").text(year);
 		updateMapStylesForYear(year);
@@ -301,6 +303,12 @@ $(function(){
 	$("#filename").change(function(e) {
 		var ext = $("input#filename").val().split(".").pop().toLowerCase();
 		var filename = $("input#filename").val().split(".")[0].split("\\").pop();
+
+        if(number_of_loaded_datasets == 10) {
+            alert('Up to 10 datasets allowed');
+			this.value = null;
+			return false;
+        }
 
 		if($.inArray(ext, ["json"]) == -1) {
 			alert('Only JSON files are accepted');
@@ -512,9 +520,9 @@ $(function(){
 	var continent_checkbox = $("<input type='checkbox' id='continent_checkbox' checked><label for='continent_checkbox'> Show continent average</label>");
 		dialogJQ.prepend(continent_checkbox);
         //set up svg for graph
-        var margin = {top: 30, right: 20, bottom: 50, left: 70},
+        var margin = {top: 10, right: 20, bottom: 50, left: 70},
                     width = 750 - margin.left - margin.right,
-                    height = 315 - margin.top - margin.bottom;
+                    height = 250 - margin.top - margin.bottom;
       
         //Create a svg array 
         var svgs = new Array(number_of_loaded_datasets);
@@ -549,25 +557,27 @@ $(function(){
 		var updateChartFunction = function() {};
   
  // dialogJQ.on("dialogresize", updateChartFunction);
-		//	$(document).bind("flunet-update", updateChartFunction);
+		//	$(document).bind("update", updateChartFunction);
 			
 		//	updateChartFunction();
 		*/
 		dialogJQ.dialog({
 		    resizable: true,
-		    draggable: true,
+            draggable: true,
             modal:true,
 			title: iso_code_to_name(countryCode),
 			minWidth: 850,
 			minHeight: 415,
+           maxWidth: 850,
 			width: 850,
 			height: 415,
 			close: function(event, ui) {
-				//$(document).unbind("flunet-update", updateChartFunction);
+				//$(document).unbind("update", updateChartFunction);
                 dialogJQ.find("#continent_checkbox").removeAttr("id");
 				dialogJQ = null;
 			}
 		});
+      
 	});
 	
 	
@@ -595,13 +605,13 @@ $(function(){
 		
 		subtypeChangeCounter++;
 		yellINeedToLoad();
-		$(document).on("flunet-update", function thisfunc() {
+		$(document).on("update", function thisfunc() {
 			yellImDoneLoading();
-			$(document).off("flunet-update", thisfunc);
+			$(document).off("update", thisfunc);
 			callbacks.forEach(function(item){ item(); });
 		});
 		setTimeout(function(){
-			$(document).trigger("flunet-update");
+			$(document).trigger("update");
 		}, 100);
 	}
 	var scheduleSubtypeChangeEvent = function(callback) {
