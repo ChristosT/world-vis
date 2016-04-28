@@ -15,7 +15,6 @@ var UpdateStats = function UpdateStats(){
                              
         
        var sortedA = A.sort(function(a,b){ return parseFloat(b.value)-parseFloat(a.value)});
-       console.log(sortedA);
        var countryname;
        
      
@@ -44,9 +43,6 @@ var UpdateStats = function UpdateStats(){
        //Mean
        var sum = sortedA.sum("value");
         meanPerYear.push(sum/sortedA.length);
-       
-       
-       
        
        
     }
