@@ -22,7 +22,7 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode,dataset_index) {
 	var yAxis = d3.svg.axis().scale(y)
     	.orient("left")
         .ticks(6)
-        .tickFormat(d3.format(".2s"));
+        .tickFormat(d3.format(".s"));
         //.tickFormat(d3.format(".2f"));
 
 	// Define the line
@@ -87,12 +87,21 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode,dataset_index) {
     var country_ymax   =  d3.max(country_plotdata,function(d) {return d.value;});
     var continent_ymin =  d3.min([country_ymin,d3.min(continent_plotdata,function(d) { return d.value;})]);
     var continent_ymax =  d3.max([country_ymax,d3.max(continent_plotdata,function(d) { return d.value;})]);
-    y.domain([ continent_ymin - 0.5,continent_ymax +0.5]);
-   
+    var continent_padding  = (continent_ymax - continent_ymin) *0.05;  
+    var country_padding  = (country_ymax - country_ymin) *0.05;
+    //yaxis limits when country is show allone
+    var country_yaxis_min = country_ymin - country_padding;
+    var country_yaxis_max = country_ymax + country_padding;
+    //yaxis limits when both lines are presented
+    var together_yaxis_min = d3.min([country_yaxis_min,continent_ymin -continent_padding]);
+    var together_yaxis_max = d3.max([country_yaxis_max,continent_ymax +continent_padding]);
+    //by default continent button is ON
+    y.domain([ together_yaxis_min,together_yaxis_max]);
+
 dialogJQ.find("#continent_checkbox").button();
 dialogJQ.find("#continent_checkbox").on("change", function() {
 	if(this.checked) {	
-    	y.domain([ continent_ymin - 0.5,continent_ymax +0.5]);
+    	y.domain([ together_yaxis_min,together_yaxis_max]);
         svg.selectAll(".y.axis").transition().duration(300).call(yAxis);
         svg.selectAll(".dot").transition().duration(300).attr("cy", function(d) { return y(d.value); })
 		svg.selectAll(".line").transition().duration(300).attr("d", valueline(country_plotdata))
@@ -100,8 +109,7 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
 		svg.selectAll(".line2").transition().duration(300).attr("stroke-width", 2);
 
 	} else {
-	
-    	y.domain([country_ymin -0.5,country_ymax +0.5]);
+    	y.domain([ country_yaxis_min,country_yaxis_max]);
         svg.selectAll(".y.axis").transition().duration(300).call(yAxis);
         svg.selectAll(".dot").transition().duration(300).attr("cy", function(d) { return y(d.value); })
 		svg.selectAll(".line").transition().duration(300).attr("d", valueline(country_plotdata))
