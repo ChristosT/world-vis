@@ -1,8 +1,9 @@
+// keep min/max global to use it with the legend of the saturation bins 
+var maxPerYear=[];
+var minPerYear=[];
 
 var UpdateStats = function UpdateStats(){
     
-    var maxPerYear=[];
-    var minPerYear=[];
     var maxPerYearCountryName=[];
     var minPerYearCountryName=[];
     var meanPerYear=[];
@@ -47,7 +48,6 @@ var UpdateStats = function UpdateStats(){
        
     }
    
-   // table ="<table border=1  rules=row  style=\"width:60%\ ;border:1px solid black;border-collapse:collapse;\" cellspacing=\"10\" align=\"center\" >"
     table ="<table  style=\"border-spacing:0; width:60% \"  cellspacing=\"15\" align=\"center\" >"
 
     table +="<tr> <th> Year </th> <th colspan = \"2\"> Max </th> <th colspan = \"2\" > Min </th>  <th> Mean  </th> <th>  Median </th> </tr>"
@@ -60,5 +60,7 @@ var UpdateStats = function UpdateStats(){
     
     table+="</table>"
     document.getElementById('summarybox').innerHTML = table;   
-    
+   for(i=0;i<3;++i) {
+    console.log(BinBoundaries(i));
+    }
 }
