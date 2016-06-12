@@ -187,20 +187,20 @@ var renormalizeData = function(subtypeSet) {
     
 	var val = dataset[selected].forEach(function(row) {
 		row.scalefactors[subtypeSet.name] = 1.0/yearMaximum;
-		avg_per_continent_per_year[row.yearindex][ContinentIndex(list_Continent[row.country])] +=  row.value; 
+		avg_per_continent_per_year[row.yearindex][ContinentIndex(list_Continent[row.country])] +=  row.value;
+        //console.log(ContinentIndex(list_Continent[row.country]));
         valid_years[row.yearindex][ContinentIndex(list_Continent[row.country])] = 1;
 
 	});	
 	
 	//Continent staff
-		//Maximum ovewr all averages over all the years
+		//Maximum over all averages over all the years
 		var yearMaximumContinent = -1*Number.MAX_VALUE ;
 		for(i = 0; i <= maxYearIndex(); i++) 
 		{
 			
 			for(j = 0; j < continents.length; j++) 
 			{
-				//console.log(avg_per_continent_per_year[i][j]);
 				avg_per_continent_per_year[i][j] /= numberofcountries[j];
 		
 				if(avg_per_continent_per_year[i][j]>yearMaximumContinent)

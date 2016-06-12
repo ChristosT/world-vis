@@ -2,11 +2,12 @@
 var maxPerYear=[];
 var minPerYear=[];
 
+var meanPerYear=[];
+
 var UpdateStats = function UpdateStats(){
     
     var maxPerYearCountryName=[];
     var minPerYearCountryName=[];
-    var meanPerYear=[];
     var medianPerYear=[];
     
     for(i=0;i<=maxYearIndex();++i)
@@ -60,7 +61,7 @@ var UpdateStats = function UpdateStats(){
     
     table+="</table>"
     document.getElementById('summarybox').innerHTML = table;   
-   for(i=0;i<3;++i) {
-    console.log(BinBoundaries(i));
-    }
+   //for(i=0;i<3;++i) {
+    //console.log(BinBoundaries(i));
+   // }
 }
