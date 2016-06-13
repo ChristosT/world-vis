@@ -879,14 +879,14 @@ $(function(){
 UpdateLegend = function () {
    BinColors=[];
    for(i=0;i<3;++i) {
-           	var value_normalized = SelectBin(i/3);
-			var fillcolor = $.Color("#FFFFFF");
-			var subtype = currentSubtypeSet;
-		
-			
-			var tintcolor = $.Color("transparent").transition($.Color(subtype.color), value_normalized);
-			var color = Color_mixer.mix(tintcolor,fillcolor);
-            BinColors.push(color.toHexString());
+        var value_normalized = SelectBin(i/3);
+        var fillcolor = $.Color("#FFFFFF");
+        var subtype = currentSubtypeSet;
+    
+        
+        var tintcolor = $.Color("transparent").transition($.Color(subtype.color), value_normalized);
+        var color = Color_mixer.mix(tintcolor,fillcolor);
+        BinColors.push(color.toHexString());
     }
 
     table ="<table  class=\"legend\" >"

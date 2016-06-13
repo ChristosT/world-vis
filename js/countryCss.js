@@ -58,7 +58,6 @@ var updateMapStylesForYear = function (year) {
 	{
 	var colorFunc = function(row) {
 		var fillcolor = $.Color("#FFFFFF");
-		var tints = [];
 		var subtype = currentSubtypeSet;
 
 		var scalefactor = (subtype.name in row.scalefactors ? row.scalefactors[subtype.name] : 1.0);
@@ -66,22 +65,8 @@ var updateMapStylesForYear = function (year) {
 		var value_normalized = SelectBin(row[subtype.name] * scalefactor);
 
 		var tintcolor = $.Color("transparent").transition($.Color(subtype.color), value_normalized);
-		tints.push({
-			color: tintcolor,
-			valueNormalized: value_normalized
-		});
-		
-		var totalTintValues = fold(function(acc, item) { return acc + item.valueNormalized; }, 0, tints);
-		if (totalTintValues == 0) return fillcolor;
-
-		var finalMix = [];
-		tints.forEach(function(tint){
-			var thisalpha = tint.valueNormalized / totalTintValues;
-			var mixedcolor = Color_mixer.mix(tint.color, fillcolor).alpha(thisalpha);
-			finalMix.push(mixedcolor);
-		});
-		return Color_mixer.mix(finalMix);
-			
+	    var color = Color_mixer.mix(tintcolor, fillcolor);
+		return color;
 		
 	};
 	clearCountryColors();
@@ -100,38 +85,20 @@ var updateMapStylesForYear = function (year) {
 		{
 		
        
-			var fillcolor = $.Color("#FFFFFF");
-			var tints = [];
-			var subtype = currentSubtypeSet;
-			var tempcontinent = list_Continent[country];
-			
-			
-			
-       		var output = dataset_Continent[selected].where(function(row){return (row.year == year) && (row.continent == tempcontinent) })
-                    								.select(function(row){ return [row.value,row.valid]}) ;
-			if(output[1]==0)
+            var fillcolor = $.Color("#FFFFFF");
+            var subtype = currentSubtypeSet;
+            var tempcontinent = list_Continent[country];
+            
+            var output = dataset_Continent[selected].where(function(row){return (row.year == year) && (row.continent == tempcontinent) })
+                                                    .select(function(row){ return [row.value,row.valid]}) ;
+            if(output[1]==0)
                  continue;
                 
-           	var value_normalized = SelectBin(output[0]*scalefactor);
-		
-			
-			var tintcolor = $.Color("transparent").transition($.Color(subtype.color), value_normalized);
-			tints.push({
-				color: tintcolor,
-				valueNormalized: value_normalized
-			});
-			
-			var totalTintValues = fold(function(acc, item) { return acc + item.valueNormalized; }, 0, tints);
-
-			var finalMix = [];
-			tints.forEach(function(tint){
-				var thisalpha = tint.valueNormalized / totalTintValues;
-				var mixedcolor = Color_mixer.mix(tint.color, fillcolor).alpha(thisalpha);
-				finalMix.push(mixedcolor);
-			});
-			
-			var countrycolor = Color_mixer.mix(finalMix);
-			colorCountry(country, countrycolor.toHexString());
+            var value_normalized = SelectBin(output[0]*scalefactor);
+        
+            var tintcolor = $.Color("transparent").transition($.Color(subtype.color), value_normalized);
+            var color = Color_mixer.mix(tintcolor,fillcolor);
+  			colorCountry(country, color.toHexString());
 		}
 		
 		
