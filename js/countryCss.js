@@ -81,6 +81,7 @@ var updateMapStylesForYear = function (year) {
 			finalMix.push(mixedcolor);
 		});
 		return Color_mixer.mix(finalMix);
+			
 		
 	};
 	clearCountryColors();

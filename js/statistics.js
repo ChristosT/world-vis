@@ -5,10 +5,12 @@ var minPerYear=[];
 var meanPerYear=[];
 
 var UpdateStats = function UpdateStats(){
-    
     var maxPerYearCountryName=[];
     var minPerYearCountryName=[];
     var medianPerYear=[];
+    maxPerYear=[];
+    minPerYear=[];
+    meanPerYear=[];
     
     for(i=0;i<=maxYearIndex();++i)
     {
@@ -49,7 +51,8 @@ var UpdateStats = function UpdateStats(){
        
     }
    
-    table ="<table  style=\"border-spacing:0; width:60% \"  cellspacing=\"15\" align=\"center\" >"
+    //table ="<table  class =\"sumtable\" style=\"border-spacing:0; width:60% \"  cellspacing=\"15\" align=\"center\" >"
+    table ="<table  class =\"sumtable\"  >"
 
     table +="<tr> <th> Year </th> <th colspan = \"2\"> Max </th> <th colspan = \"2\" > Min </th>  <th> Mean  </th> <th>  Median </th> </tr>"
    
@@ -61,7 +64,5 @@ var UpdateStats = function UpdateStats(){
     
     table+="</table>"
     document.getElementById('summarybox').innerHTML = table;   
-   //for(i=0;i<3;++i) {
-    //console.log(BinBoundaries(i));
-   // }
 }
+

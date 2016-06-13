@@ -80,9 +80,17 @@ body {
   stroke-opacity: .3;
 }
 
-#globecontainer, #mapcontainer {
+#mapcontainer {
   position: absolute;
   top: 110px; 
+  bottom: 115px;
+  left: 50px;
+  right: 50px;
+  display: none;
+}
+#globecontainer {
+  position: absolute;
+  top: 150px; 
   bottom: 115px;
   left: 50px;
   right: 50px;
@@ -345,10 +353,28 @@ body {
     shape-rendering: crispEdges;
 }
 
-/*table */
-td{
+/*table for  summarybox*/
+table.sumtable {
+border-spacing:0; 
+width:60%;
+cellspacing :15;
+align :center;
+}
+
+table.sumtable td{
 border-top:1px solid black;
 padding-bottom:0;
 padding-top:0;
-
+}
+/*table for  legend*/
+table.legend {
+  position: absolute;
+  left: 400px;
+    border-spacing:0; 
+    width:40%;
+    cellspacing :15;
+    font-size : 16px;
+    font-style :bold;
+    align :center;
+/*color: white; */
 }

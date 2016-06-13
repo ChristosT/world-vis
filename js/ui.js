@@ -434,6 +434,7 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
 		$("#timelabel").text(year);
 		updateMapStylesForYear(year);
         UpdateStats();
+        UpdateLegend();
 	});
 
 	var _playTimeout = null;
@@ -873,3 +874,29 @@ $(function(){
 	
 	yellImDoneLoading();
 });
+
+
+UpdateLegend = function () {
+   BinColors=[];
+   for(i=0;i<3;++i) {
+           	var value_normalized = SelectBin(i/3);
+			var fillcolor = $.Color("#FFFFFF");
+			var subtype = currentSubtypeSet;
+		
+			
+			var tintcolor = $.Color("transparent").transition($.Color(subtype.color), value_normalized);
+			var color = Color_mixer.mix(tintcolor,fillcolor);
+            BinColors.push(color.toHexString());
+    }
+
+    table ="<table  class=\"legend\" >"
+
+    table +="<td style=\"padding:5px 5px 5px 5px;\" bgcolor="+ BinColors[0]+ "> [" + BinBoundaries(0)[0].toFixed(2) + " - " + BinBoundaries(0)[1].toFixed(2)  +") </td>" 
+    table +="<td style=\"padding:5px 5px 5px 5px;\" bgcolor="+ BinColors[1]+"> [" + BinBoundaries(1)[0].toFixed(2) + " - " + BinBoundaries(1)[1].toFixed(2)  +") </td>" 
+    table +="<td style=\"padding:5px 5px 5px 5px;\" bgcolor="+ BinColors[2]+"> [" + BinBoundaries(2)[0].toFixed(2) + " - " + BinBoundaries(2)[1].toFixed(2)  +"] </td>" 
+    
+    
+    table+="</table>"
+    document.getElementById('saturationlegend').innerHTML = table;   
+
+}
