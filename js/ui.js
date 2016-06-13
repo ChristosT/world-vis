@@ -70,7 +70,7 @@ function GenerateGraph(dialogJQ,svg,width,height,countryCode,dataset_index) {
    		} 
 	    
 	    datapoint =  {value:-1,year:1888};
-        datapoint.value = meanPerYear[yearindex];
+        datapoint.value = global_mean[dataset_index][yearindex];
         datapoint.year = years_by_index[dataset_index][yearindex].year;
         global_plotdata.push(datapoint);
 	}
@@ -303,7 +303,7 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
 		.attr("stroke", "grey")
         .attr("r", 0)
         .attr("cx", function(d) { return x(d.year); })
-        .attr("cy", function(d) { return y(d.value); })
+        //.attr("cy", function(d) { return y(d.value); })
         .on("mouseover",function(d){
              svg.append("rect")
                 .attr("id","tooltip2")
@@ -350,7 +350,7 @@ dialogJQ.find("#continent_checkbox").on("change", function() {
 		.attr("stroke", "black")
         .attr("r", 0)
         .attr("cx", function(d) { return x(d.year); })
-        .attr("cy", function(d) { return y(d.value); })
+        //.attr("cy", function(d) { return y(d.value); })
         .on("mouseover",function(d){
              svg.append("rect")
                 .attr("id","tooltip2")

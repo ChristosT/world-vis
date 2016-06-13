@@ -5,6 +5,7 @@ var selected = 0;
 var number_of_loaded_datasets=0;
 var dataset = new Array(10);
 var dataset_Continent = new Array(10);
+var global_mean = new Array(10);
 
 var continents =["AF", "AS" ,"OC" ,"EU", "NA", "SA", "AN"];
 

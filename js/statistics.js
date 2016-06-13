@@ -2,7 +2,6 @@
 var maxPerYear=[];
 var minPerYear=[];
 
-var meanPerYear=[];
 
 var UpdateStats = function UpdateStats(){
     var maxPerYearCountryName=[];
@@ -63,6 +62,7 @@ var UpdateStats = function UpdateStats(){
     }
     
     table+="</table>"
-    document.getElementById('summarybox').innerHTML = table;   
+    document.getElementById('summarybox').innerHTML = table;  
+    global_mean[selected] = meanPerYear;
 }
 
